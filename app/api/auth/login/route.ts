@@ -24,9 +24,32 @@ export async function POST(request: NextRequest) {
 
     // Removed auto-seeding - admin user must be created manually or via seed script
 
-    const admin = await prisma.admin.findUnique({
-      where: { username },
-    })
+    let admin
+    try {
+      admin = await prisma.admin.findUnique({
+        where: { username },
+      })
+    } catch (error: any) {
+      // Check if it's a table doesn't exist error (P2021)
+      const errorCode = error?.code || error?.meta?.code
+      const errorMessage = error?.message || ''
+      const hasTableError = errorCode === 'P2021' || 
+                           errorMessage.includes('does not exist') ||
+                           errorMessage.includes('TableDoesNotExist')
+      
+      if (hasTableError) {
+        console.error('Database tables do not exist. Please run migrations first.')
+        return NextResponse.json(
+          { 
+            error: 'Database not set up. Please run database migrations first.',
+            details: 'Run: npx prisma migrate deploy'
+          },
+          { status: 500 }
+        )
+      }
+      // Re-throw other errors to be caught by outer catch
+      throw error
+    }
 
     if (!admin) {
       console.error(`Admin user "${username}" not found`)
@@ -62,13 +85,31 @@ export async function POST(request: NextRequest) {
     })
 
     return response
-  } catch (error) {
+  } catch (error: any) {
+    // Check if it's a table doesn't exist error that wasn't caught earlier
+    const errorCode = error?.code || error?.meta?.code
+    const errorMessage = error?.message || ''
+    const hasTableError = errorCode === 'P2021' || 
+                         errorMessage.includes('does not exist') ||
+                         errorMessage.includes('TableDoesNotExist')
+    
+    if (hasTableError) {
+      console.error('Database tables do not exist. Please run migrations first.')
+      return NextResponse.json(
+        { 
+          error: 'Database not set up. Please run database migrations first.',
+          details: 'Run: npx prisma migrate deploy'
+        },
+        { status: 500 }
+      )
+    }
+    
     console.error('Login error:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorMsg = error instanceof Error ? error.message : 'Unknown error'
     const errorStack = error instanceof Error ? error.stack : undefined
-    console.error('Error details:', { errorMessage, errorStack })
+    console.error('Error details:', { errorMessage: errorMsg, errorStack })
     return NextResponse.json(
-      { error: 'Internal server error', details: process.env.NODE_ENV === 'development' ? errorMessage : undefined },
+      { error: 'Internal server error', details: process.env.NODE_ENV === 'development' ? errorMsg : undefined },
       { status: 500 }
     )
   }
