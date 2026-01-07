@@ -5,7 +5,26 @@ import { requireAuth } from '@/lib/auth'
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
+  // Skip database calls during build time or if DATABASE_URL is not set
+  // This must be the FIRST thing in the function, before any imports are used
+  if (process.env.NEXT_PHASE === 'phase-production-build' || 
+      process.env.NEXT_PHASE === 'phase-development-build' ||
+      !process.env.DATABASE_URL) {
+    return NextResponse.json({
+      eventStats: { total: 0, upcoming: 0, past: 0, totalAttendees: 0, totalAttended: 0, averageAttendance: 0, totalWaitlist: 0, totalFeedback: 0, averageRating: 0 },
+      memberStats: { total: 0, pending: 0, active: 0, declined: 0, growth: 0 },
+      blogStats: { total: 0, published: 0, drafts: 0, totalViews: 0, averageViews: 0 },
+      campaignStats: { total: 0, sent: 0, scheduled: 0, drafts: 0, totalRecipients: 0, totalSent: 0, totalFailed: 0 },
+      attendanceTrends: [],
+      memberGrowthTrends: [],
+      topEvents: [],
+      topBlogPosts: [],
+      eventAttendanceComparison: [],
+    })
+  }
+
   try {
+
     const session = await requireAuth(request)
     
     if (!session) {

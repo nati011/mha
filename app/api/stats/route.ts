@@ -3,6 +3,14 @@ import { prisma } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
   try {
+    // Skip database calls during build time or if DATABASE_URL is not set
+    if (process.env.NEXT_PHASE === 'phase-production-build' || !process.env.DATABASE_URL) {
+      return NextResponse.json({
+        totalMembers: 0,
+        totalEvents: 0,
+      })
+    }
+
     // Get all events
     const events = await prisma.event.findMany({
       select: {

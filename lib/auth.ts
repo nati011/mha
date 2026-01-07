@@ -12,6 +12,15 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 export async function getSession(request: NextRequest): Promise<{ isAuthenticated: boolean; username?: string }> {
+  // Skip database calls during build time or if DATABASE_URL is not set
+  const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build' || 
+                      process.env.NEXT_PHASE === 'phase-development-build' ||
+                      process.env.NEXT_PHASE === 'phase-export'
+  
+  if (isBuildTime || !process.env.DATABASE_URL) {
+    return { isAuthenticated: false }
+  }
+
   const sessionId = request.cookies.get('admin_session')?.value
   
   if (!sessionId) {

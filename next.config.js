@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Skip static optimization for API routes that need database access
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
   webpack: (config, { isServer }) => {
     if (isServer) {
       // Exclude native modules from webpack bundling on server

@@ -6,6 +6,11 @@ import EventCard from '@/components/EventCard'
 
 async function getUpcomingEvents() {
   try {
+    // Skip database calls during build if DATABASE_URL is not set
+    if (!process.env.DATABASE_URL) {
+      return []
+    }
+
     const now = new Date()
     const events = await prisma.event.findMany({
       orderBy: { date: 'asc' },
@@ -59,6 +64,14 @@ async function getUpcomingEvents() {
 
 async function getStats() {
   try {
+    // Skip database calls during build if DATABASE_URL is not set
+    if (!process.env.DATABASE_URL) {
+      return {
+        totalMembers: 0,
+        totalEvents: 0,
+      }
+    }
+
     if (!prisma || !prisma.member || !prisma.event) {
       console.error('Prisma client or models not available')
       return {

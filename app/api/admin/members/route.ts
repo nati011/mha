@@ -5,6 +5,15 @@ import { requireAuth } from '@/lib/auth'
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
+  // Skip database calls during build time or if DATABASE_URL is not set
+  const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build' || 
+                      process.env.NEXT_PHASE === 'phase-development-build' ||
+                      process.env.NEXT_PHASE === 'phase-export'
+  
+  if (isBuildTime || !process.env.DATABASE_URL) {
+    return NextResponse.json([])
+  }
+
   try {
     const session = await requireAuth(request)
     

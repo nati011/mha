@@ -3,6 +3,11 @@ import EventsPageClient from './EventsPageClient'
 
 async function getEvents() {
   try {
+    // Skip database calls during build if DATABASE_URL is not set
+    if (!process.env.DATABASE_URL) {
+      return []
+    }
+
     const events = await prisma.event.findMany({
       orderBy: { date: 'asc' },
       include: {
