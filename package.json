@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && npm run migrate:deploy && npm run seed-admin:build; next build",
+    "build": "prisma generate && npm run migrate:deploy; npm run seed-admin:build; next build",
     "start": "next start",
     "lint": "next lint",
     "seed-admin": "tsx scripts/seed-admin.ts",
