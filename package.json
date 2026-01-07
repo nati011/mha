@@ -13,7 +13,6 @@
     "check-admin": "tsx scripts/check-admin.ts",
     "migrate:deploy": "tsx scripts/auto-migrate.ts",
     "postinstall": "prisma generate",
-    "postbuild": "npm run migrate:deploy && npm run seed-admin:build",
     "vercel-build": "npm run build && npm run migrate:deploy && npm run seed-admin:build",
     "setup": "prisma migrate deploy && npm run seed-admin"
   },

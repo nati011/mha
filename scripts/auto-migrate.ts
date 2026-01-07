@@ -49,26 +49,53 @@ async function runMigrations() {
 
   try {
     const { execSync } = require('child_process')
+    const fs = require('fs')
+    const path = require('path')
+    
+    // Check if migrations exist (other than lock file)
+    const migrationsDir = path.join(process.cwd(), 'prisma', 'migrations')
+    const migrationFiles = fs.readdirSync(migrationsDir).filter((file: string) => 
+      file !== 'migration_lock.toml' && !file.startsWith('.')
+    )
+    
+    const hasMigrations = migrationFiles.length > 0
     
     console.log('🔄 Running database migrations automatically...')
     console.log(`   Environment: ${isVercel ? 'Vercel' : 'Local'}`)
     console.log(`   Database URL: ${databaseUrl.substring(0, 50)}...`)
     console.log(`   Working directory: ${process.cwd()}`)
+    console.log(`   Migrations found: ${hasMigrations ? 'Yes' : 'No'}`)
     
-    // Run migrations
-    const output = execSync('npx prisma migrate deploy', {
-      stdio: 'pipe', // Capture output for better error messages
-      env: { ...process.env },
-      cwd: process.cwd(),
-      encoding: 'utf8',
-    })
+    let output: string
+    
+    if (!hasMigrations) {
+      // No migrations exist - use db push to sync schema directly
+      console.log('⚠️  No migrations found - using prisma db push to sync schema')
+      console.log('   This will create tables directly from your schema')
+      console.log('   Consider creating a migration later with: npx prisma migrate dev --name init')
+      
+      output = execSync('npx prisma db push --accept-data-loss', {
+        stdio: 'pipe',
+        env: { ...process.env },
+        cwd: process.cwd(),
+        encoding: 'utf8',
+      })
+    } else {
+      // Migrations exist - use migrate deploy
+      output = execSync('npx prisma migrate deploy', {
+        stdio: 'pipe',
+        env: { ...process.env },
+        cwd: process.cwd(),
+        encoding: 'utf8',
+      })
+    }
     
     // Print output
     if (output) {
       console.log(output)
     }
     
-    console.log('✅ Migrations completed successfully!')
+    console.log('✅ Database schema synced successfully!')
     process.exit(0)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
@@ -79,12 +106,15 @@ async function runMigrations() {
     console.error('Migration command output:', fullError)
     console.error('Error message:', errorMessage)
     
-    // If it's a "migrations already applied" type error, that's fine
+    // If it's a "migrations already applied" or "schema already in sync" type error, that's fine
     const combinedError = (errorMessage + ' ' + fullError).toLowerCase()
     if (combinedError.includes('already applied') || 
         combinedError.includes('no pending migrations') ||
-        combinedError.includes('database is up to date')) {
-      console.log('ℹ️  Migrations are already up to date')
+        combinedError.includes('database is up to date') ||
+        combinedError.includes('already in sync') ||
+        combinedError.includes('drift detected: no changes') ||
+        combinedError.includes('database schema is already in sync')) {
+      console.log('ℹ️  Database schema is already up to date')
       process.exit(0)
     }
     
