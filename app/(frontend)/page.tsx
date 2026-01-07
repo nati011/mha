@@ -7,10 +7,39 @@ import EventCard from '@/components/EventCard'
 async function getUpcomingEvents() {
   try {
     // Skip database calls during build if DATABASE_URL is not set
-    if (!process.env.DATABASE_URL) {
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.trim() === '') {
+      console.warn('[getUpcomingEvents] DATABASE_URL not set, returning empty array')
       return []
     }
 
+    // Check if we're in build phase
+    const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build' || 
+                        process.env.NEXT_PHASE === 'phase-development-build' ||
+                        process.env.NEXT_PHASE === 'phase-export'
+    
+    if (isBuildTime) {
+      console.warn('[getUpcomingEvents] Build time detected, returning empty array')
+      return []
+    }
+
+    // Try to access prisma - this might throw if DATABASE_URL is not set
+    try {
+      // Test if prisma is accessible
+      if (!prisma || !prisma.event) {
+        console.error('[getUpcomingEvents] Prisma client not available')
+        return []
+      }
+    } catch (prismaError) {
+      // Prisma client initialization failed
+      const errorMsg = prismaError instanceof Error ? prismaError.message : String(prismaError)
+      if (errorMsg.includes('DATABASE_URL is not set') || errorMsg.includes('cannot be used during build')) {
+        console.warn('[getUpcomingEvents] Prisma client not available:', errorMsg)
+        return []
+      }
+      throw prismaError // Re-throw if it's a different error
+    }
+
+    console.log('[getUpcomingEvents] Fetching events from database...')
     const now = new Date()
     const events = await prisma.event.findMany({
       orderBy: { date: 'asc' },
@@ -57,7 +86,21 @@ async function getUpcomingEvents() {
     
     return upcomingEvents
   } catch (error) {
-    console.error('Error fetching events:', error)
+    const errorMsg = error instanceof Error ? error.message : String(error)
+    const errorCode = (error as any)?.code
+    
+    // Handle specific Prisma errors
+    if (errorMsg.includes('DATABASE_URL is not set') || 
+        errorMsg.includes('cannot be used during build') ||
+        errorMsg.includes('does not exist') ||
+        errorCode === 'P2021') {
+      console.warn('[getUpcomingEvents] Database not available:', errorMsg)
+      return []
+    }
+    
+    console.error('[getUpcomingEvents] Error fetching events:', error)
+    console.error('[getUpcomingEvents] Error details:', errorMsg)
+    console.error('[getUpcomingEvents] Error code:', errorCode)
     return []
   }
 }
@@ -65,21 +108,51 @@ async function getUpcomingEvents() {
 async function getStats() {
   try {
     // Skip database calls during build if DATABASE_URL is not set
-    if (!process.env.DATABASE_URL) {
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.trim() === '') {
+      console.warn('[getStats] DATABASE_URL not set, returning zeros')
       return {
         totalMembers: 0,
         totalEvents: 0,
       }
     }
 
-    if (!prisma || !prisma.member || !prisma.event) {
-      console.error('Prisma client or models not available')
+    // Check if we're in build phase
+    const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build' || 
+                        process.env.NEXT_PHASE === 'phase-development-build' ||
+                        process.env.NEXT_PHASE === 'phase-export'
+    
+    if (isBuildTime) {
+      console.warn('[getStats] Build time detected, returning zeros')
       return {
         totalMembers: 0,
         totalEvents: 0,
       }
     }
+
+    // Try to access prisma - this might throw if DATABASE_URL is not set
+    try {
+      // Test if prisma is accessible
+      if (!prisma || !prisma.member || !prisma.event) {
+        console.error('[getStats] Prisma client or models not available')
+        return {
+          totalMembers: 0,
+          totalEvents: 0,
+        }
+      }
+    } catch (prismaError) {
+      // Prisma client initialization failed
+      const errorMsg = prismaError instanceof Error ? prismaError.message : String(prismaError)
+      if (errorMsg.includes('DATABASE_URL is not set') || errorMsg.includes('cannot be used during build')) {
+        console.warn('[getStats] Prisma client not available:', errorMsg)
+        return {
+          totalMembers: 0,
+          totalEvents: 0,
+        }
+      }
+      throw prismaError // Re-throw if it's a different error
+    }
     
+    console.log('[getStats] Fetching stats from database...')
     const [totalMembers, totalEvents] = await Promise.all([
       prisma.member.count({
         where: {
@@ -89,18 +162,40 @@ async function getStats() {
       prisma.event.count(),
     ])
     
+    console.log('[getStats] Stats fetched successfully:', { totalMembers, totalEvents })
+    
     return {
       totalMembers,
       totalEvents,
     }
   } catch (error) {
-    console.error('Error fetching stats:', error)
+    const errorMsg = error instanceof Error ? error.message : String(error)
+    const errorCode = (error as any)?.code
+    
+    // Handle specific Prisma errors
+    if (errorMsg.includes('DATABASE_URL is not set') || 
+        errorMsg.includes('cannot be used during build') ||
+        errorMsg.includes('does not exist') ||
+        errorCode === 'P2021') {
+      console.warn('[getStats] Database not available:', errorMsg)
+      return {
+        totalMembers: 0,
+        totalEvents: 0,
+      }
+    }
+    
+    console.error('[getStats] Error fetching stats:', error)
+    console.error('[getStats] Error details:', errorMsg)
+    console.error('[getStats] Error code:', errorCode)
     return {
       totalMembers: 0,
       totalEvents: 0,
     }
   }
 }
+
+// Force dynamic rendering to ensure data is fetched at runtime
+export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   const upcomingEvents = await getUpcomingEvents()

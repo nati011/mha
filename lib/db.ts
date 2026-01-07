@@ -36,14 +36,31 @@ function getPrismaClient(): PrismaClient {
 // This prevents initialization errors during build or when DATABASE_URL is not set
 export const prisma = new Proxy({} as PrismaClient, {
   get(_target, prop) {
-    const client = getPrismaClient()
-    const value = (client as any)[prop]
-    
-    // If it's a function, bind it to the client
-    if (typeof value === 'function') {
-      return value.bind(client)
+    try {
+      const client = getPrismaClient()
+      const value = (client as any)[prop]
+      
+      // If it's a function, bind it to the client
+      if (typeof value === 'function') {
+        return value.bind(client)
+      }
+      
+      return value
+    } catch (error) {
+      // If PrismaClient initialization fails, return a dummy object that throws on use
+      const errorMsg = error instanceof Error ? error.message : String(error)
+      if (errorMsg.includes('DATABASE_URL is not set') || errorMsg.includes('cannot be used during build')) {
+        // Return a proxy that throws helpful errors when methods are called
+        return new Proxy(() => {}, {
+          apply() {
+            throw new Error('PrismaClient is not available. DATABASE_URL is not set or build is in progress.')
+          },
+          get() {
+            throw new Error('PrismaClient is not available. DATABASE_URL is not set or build is in progress.')
+          }
+        })
+      }
+      throw error
     }
-    
-    return value
   },
 })

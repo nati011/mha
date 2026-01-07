@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { requireAuth } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 interface PanelistInput {
   name: string
   role: string
@@ -43,6 +45,7 @@ export async function GET(request: NextRequest) {
     // Calculate and add status to each event
     const now = new Date()
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const todayStartTime = todayStart.getTime()
     
     const eventsWithStatus = events.map((event: typeof events[0]) => {
       // Parse event date - handle both date-only and datetime strings
@@ -50,29 +53,42 @@ export async function GET(request: NextRequest) {
       const dateStr = event.date.trim()
       
       try {
-        eventDate = new Date(dateStr)
-        if (isNaN(eventDate.getTime())) {
-          // Assume YYYY-MM-DD format and parse manually
+        // If date string is in YYYY-MM-DD format, parse it manually to avoid timezone issues
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+          // Date-only format (YYYY-MM-DD) - parse manually using local timezone
           const parts = dateStr.split('-')
-          if (parts.length === 3) {
-            const year = parseInt(parts[0], 10)
-            const month = parseInt(parts[1], 10) - 1
-            const day = parseInt(parts[2], 10)
-            eventDate = new Date(year, month, day)
-          } else {
-            eventDate = new Date(dateStr)
+          const year = parseInt(parts[0], 10)
+          const month = parseInt(parts[1], 10) - 1 // Month is 0-indexed
+          const day = parseInt(parts[2], 10)
+          eventDate = new Date(year, month, day)
+        } else {
+          // Try to parse as ISO date string or other format
+          eventDate = new Date(dateStr)
+          if (isNaN(eventDate.getTime())) {
+            const parts = dateStr.split('-')
+            if (parts.length === 3) {
+              const year = parseInt(parts[0], 10)
+              const month = parseInt(parts[1], 10) - 1
+              const day = parseInt(parts[2], 10)
+              eventDate = new Date(year, month, day)
+            } else {
+              eventDate = new Date()
+            }
           }
         }
       } catch (e) {
         eventDate = new Date()
       }
       
+      // Get date-only (start of day) in local timezone for comparison
       const eventDateStart = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
+      const eventDateStartTime = eventDateStart.getTime()
       const attendeeCount = event.attendees.length
       
       let status = 'upcoming'
-      // Event is past if its date is before today
-      if (eventDateStart < todayStart) {
+      // Event is past if its date is before today (not including today)
+      // Compare timestamps to avoid any timezone issues
+      if (eventDateStartTime < todayStartTime) {
         status = 'past'
       } else if (event.capacity && attendeeCount >= event.capacity) {
         status = 'closed'
