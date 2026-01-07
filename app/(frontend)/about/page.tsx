@@ -3,29 +3,19 @@ import Link from 'next/link'
 export default function AboutPage() {
   const milestones = [
     {
-      year: '2020',
-      title: 'Foundation',
-      description: 'Mental Health Addis was founded by a group of passionate advocates.',
-    },
-    {
-      year: '2021',
+      year: '2023',
       title: 'First Events',
       description: 'Launched our monthly talk series and community dialogues.',
     },
     {
-      year: '2022',
-      title: 'Resource Hub',
-      description: 'Established our online resource library and support directory.',
+      year: '2025',
+      title: '20+ events hosted',
+      description: 'Cultivated a network of mental-health professionals and advocates.',
     },
     {
-      year: '2023',
-      title: 'Community Growth',
-      description: 'Reached 500+ community members and launched peer support programs.',
-    },
-    {
-      year: '2024',
+      year: '2026',
       title: 'Expanding Impact',
-      description: 'Continuing to grow our reach and deepen our impact in Addis Ababa.',
+      description: 'Continuing to grow our reach and deepen our impact.',
     },
   ]
 
