@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { requireAuth } from '@/lib/auth'
 
+interface PanelistInput {
+  name: string
+  role: string
+  description: string
+  image?: string | null
+}
+
 export async function GET(request: NextRequest) {
   try {
     const events = await prisma.event.findMany({
@@ -35,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate and add status to each event
     const now = new Date()
-    const eventsWithStatus = events.map((event) => {
+    const eventsWithStatus = events.map((event: typeof events[0]) => {
       const eventDate = new Date(event.date)
       const attendeeCount = event.attendees.length
       
@@ -90,7 +97,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!panelists || panelists.length === 0 || !panelists.some((p: any) => p.name && p.role)) {
+    const panelistsArray = panelists as PanelistInput[]
+    if (!panelistsArray || panelistsArray.length === 0 || !panelistsArray.some((p) => p.name && p.role)) {
       return NextResponse.json(
         { error: 'At least one panelist with name and role is required' },
         { status: 400 }
@@ -114,10 +122,10 @@ export async function POST(request: NextRequest) {
         recurrencePattern: recurrencePattern || null,
         recurrenceEndDate: recurrenceEndDate || null,
         panelists: {
-          create: panelists.map((panelist: any) => ({
+          create: panelistsArray.map((panelist) => ({
             name: panelist.name,
             role: panelist.role,
-            description: panelist.description,
+            description: panelist.description || '',
             image: panelist.image || null,
           })),
         },

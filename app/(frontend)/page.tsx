@@ -29,11 +29,11 @@ async function getUpcomingEvents() {
     
     // Filter upcoming events and calculate status
     const upcomingEvents = events
-      .filter((event) => {
+      .filter((event: typeof events[0]) => {
         const eventDate = new Date(event.date)
         return eventDate >= now
       })
-      .map((event) => {
+      .map((event: typeof events[0]) => {
         const eventDate = new Date(event.date)
         const attendeeCount = event.attendees.length
         
@@ -47,7 +47,7 @@ async function getUpcomingEvents() {
           status,
         }
       })
-      .filter((event) => event.status === 'upcoming')
+      .filter((event: { status: string }) => event.status === 'upcoming')
       .slice(0, 3)
     
     return upcomingEvents

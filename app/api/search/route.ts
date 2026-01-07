@@ -18,7 +18,28 @@ export async function GET(request: NextRequest) {
     }
 
     const searchTerm = query.toLowerCase().trim()
-    const results: any = {
+    const results: {
+      events: Array<{
+        id: number
+        title: string
+        description: string
+        date: string
+        venue: string
+        [key: string]: unknown
+      }>
+      blogPosts: Array<{
+        id: number
+        title: string
+        [key: string]: unknown
+      }>
+      members: Array<{
+        id: number
+        firstName: string
+        lastName: string
+        email: string
+        [key: string]: unknown
+      }>
+    } = {
       events: [],
       blogPosts: [],
       members: [],

@@ -1,28 +1,9 @@
 import { prisma } from '@/lib/db'
 import EventsPageClient from './EventsPageClient'
-import { Prisma } from '@prisma/client'
-
-type EventWithRelations = Prisma.EventGetPayload<{
-  include: {
-    attendees: {
-      select: {
-        id: true
-      }
-    }
-    panelists: {
-      select: {
-        id: true
-        name: true
-        role: true
-        image: true
-      }
-    }
-  }
-}>
 
 async function getEvents() {
   try {
-    const events: EventWithRelations[] = await prisma.event.findMany({
+    const events = await prisma.event.findMany({
       orderBy: { date: 'asc' },
       include: {
         attendees: {
@@ -44,7 +25,7 @@ async function getEvents() {
     
     // Calculate status for each event
     const now = new Date()
-    return events.map((event) => {
+    return events.map((event: typeof events[0]) => {
       const eventDate = new Date(event.date)
       const attendeeCount = event.attendees.length
       
