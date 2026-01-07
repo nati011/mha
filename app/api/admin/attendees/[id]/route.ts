@@ -18,7 +18,7 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const { attended, name, email, phone, dietaryRestrictions, accessibilityNeeds, emergencyContact, ageRange, howHeardAbout, questions, signature } = body
+    const { attended, name, email, phone, emergencyContact, ageRange, howHeardAbout, signature } = body
 
     const attendeeId = Number.parseInt(params.id)
 
@@ -45,12 +45,9 @@ export async function PATCH(
         name,
         email,
         phone,
-        dietaryRestrictions: dietaryRestrictions || null,
-        accessibilityNeeds: accessibilityNeeds || null,
         emergencyContact: emergencyContact || null,
         ageRange: ageRange || null,
         howHeardAbout: howHeardAbout || null,
-        questions: questions || null,
         ...(signature !== undefined ? { signature: signature || null } : {}),
         ...(typeof attended === 'boolean' ? {
           attended,

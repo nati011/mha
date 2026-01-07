@@ -116,12 +116,10 @@ export async function POST(request: NextRequest) {
           },
         })
 
-        const recipients = attendees
-          .filter((a: { phone: string | null }) => a.phone)
-          .map((attendee: { id: number; name: string; phone: string | null }) => ({
+        const recipients = attendees.map((attendee: { id: number; name: string; phone: string }) => ({
             campaignId: campaign.id,
             attendeeId: attendee.id,
-            phoneNumber: attendee.phone!,
+            phoneNumber: attendee.phone,
             name: attendee.name,
           }))
 
@@ -135,7 +133,6 @@ export async function POST(request: NextRequest) {
       const eventAttendees = await prisma.attendee.findMany({
         where: {
           eventId: Number.parseInt(eventId),
-          phone: { not: null },
         },
         select: {
           id: true,
@@ -144,10 +141,10 @@ export async function POST(request: NextRequest) {
         },
       })
 
-      const recipients = eventAttendees.map((attendee: { id: number; name: string; phone: string | null }) => ({
+      const recipients = eventAttendees.map((attendee: { id: number; name: string; phone: string }) => ({
         campaignId: campaign.id,
         attendeeId: attendee.id,
-        phoneNumber: attendee.phone!,
+        phoneNumber: attendee.phone,
         name: attendee.name,
       }))
 
