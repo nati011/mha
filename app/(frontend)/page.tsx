@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowRight, CheckCircle, Calendar, MapPin, Clock, Heart, Users, BookOpen, Shield, Bell } from 'lucide-react'
 import { prisma } from '@/lib/db'
 import { isUrl } from '@/lib/utils'
+import EventCard from '@/components/EventCard'
 
 async function getUpcomingEvents() {
   try {
