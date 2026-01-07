@@ -13,11 +13,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check if DATABASE_URL is set
+    if (!process.env.DATABASE_URL) {
+      console.error('DATABASE_URL is not set')
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      )
+    }
+
     const admin = await prisma.admin.findUnique({
       where: { username },
     })
 
     if (!admin) {
+      console.error(`Admin user "${username}" not found`)
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
@@ -27,11 +37,16 @@ export async function POST(request: NextRequest) {
     const isValid = await verifyPassword(password, admin.passwordHash)
 
     if (!isValid) {
+      console.error(`Password verification failed for user "${username}"`)
+      console.error('Attempted password:', password.substring(0, 3) + '***') // Log first 3 chars for debugging
+      console.error('Expected password should be: admin123')
       return NextResponse.json(
-        { error: 'Invalid credentials' },
+        { error: 'Invalid credentials. Make sure you are using the correct password.' },
         { status: 401 }
       )
     }
+
+    console.log(`✅ Successful login for user "${username}"`)
 
     const sessionId = await createSession(admin.username)
 

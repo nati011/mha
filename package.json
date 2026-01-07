@@ -9,6 +9,8 @@
     "lint": "next lint",
     "seed-admin": "tsx scripts/seed-admin.ts",
     "seed-admin:build": "tsx scripts/seed-admin-build.ts",
+    "seed-admin:deploy": "tsx scripts/post-deploy-seed.ts",
+    "check-admin": "tsx scripts/check-admin.ts",
     "postinstall": "prisma generate",
     "setup": "prisma migrate deploy && npm run seed-admin"
   },

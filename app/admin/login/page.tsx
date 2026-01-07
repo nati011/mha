@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -10,6 +10,30 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Auto-seed admin user on mount if it doesn't exist
+  useEffect(() => {
+    const autoSeed = async () => {
+      try {
+        // Try to seed admin user automatically (silently)
+        const response = await fetch('/api/admin/seed', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        })
+        
+        if (response.ok) {
+          const result = await response.json()
+          console.log('✅ Auto-seeded admin user:', result.message)
+        }
+      } catch (err) {
+        // Silently fail - admin might already exist or database not ready
+        // This is expected and not an error
+      }
+    }
+
+    // Only auto-seed once when component mounts
+    autoSeed()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,7 +50,9 @@ export default function AdminLoginPage() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
-        setError(data.error || 'Login failed')
+        const errorMsg = data.error || data.details || 'Login failed'
+        console.error('Login error:', errorMsg, data)
+        setError(errorMsg)
         setLoading(false)
         return
       }
@@ -55,6 +81,13 @@ export default function AdminLoginPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Login</h1>
           <p className="text-gray-600">Sign in to manage events</p>
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
+              <p className="font-semibold">Default Credentials (Development):</p>
+              <p>Username: <code className="bg-blue-100 px-1 rounded">admin</code></p>
+              <p>Password: <code className="bg-blue-100 px-1 rounded">admin123</code></p>
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
