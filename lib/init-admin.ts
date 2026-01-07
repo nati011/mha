@@ -52,7 +52,9 @@ export async function ensureAdminUser(
       return false // Admin already exists
     }
     
+    // Log the actual error for debugging
     console.error('Error ensuring admin user:', error)
+    // Don't throw - just return false to allow login to proceed
     return false
   }
 }

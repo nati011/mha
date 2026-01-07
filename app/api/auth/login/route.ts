@@ -24,8 +24,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Ensure admin user exists (code-based initialization, no migrations needed)
+    // Silently fail if admin creation fails - don't block login
     if (username === 'admin') {
-      await ensureAdminUser('admin', 'admin123')
+      try {
+        await ensureAdminUser('admin', 'admin123')
+      } catch (error) {
+        // Log but don't fail - admin might already exist or there might be a connection issue
+        console.warn('Could not ensure admin user (non-fatal):', error instanceof Error ? error.message : error)
+      }
     }
 
     const admin = await prisma.admin.findUnique({
