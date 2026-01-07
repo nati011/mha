@@ -178,6 +178,20 @@ export default function EventQRPage() {
     )
   }
 
+  if (!event) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white flex items-center justify-center px-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Event Not Found</h2>
+          <p className="text-gray-600 mb-4">{error || 'The event you are looking for does not exist.'}</p>
+          <Link href="/events" className="text-primary-600 hover:text-primary-700 font-medium">
+            ← Back to Events
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   const venueIsUrl = isUrl(event.venue)
   const placeName = venueIsUrl ? extractPlaceNameFromGoogleMaps(event.venue) : null
   const eventDate = new Date(event.date)
