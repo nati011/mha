@@ -1,0 +1,86 @@
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#0BB40D',
+          50: '#e6f9e6',
+          100: '#b3f0b3',
+          200: '#80e680',
+          300: '#4ddc4d',
+          400: '#1ad21a',
+          500: '#0BB40D',
+          600: '#09900a',
+          700: '#076c08',
+          800: '#054805',
+          900: '#032403',
+        },
+        secondary: {
+          DEFAULT: '#BCD13B',
+          50: '#f5f8e8',
+          100: '#e8eed0',
+          200: '#dbe4b8',
+          300: '#cedaa0',
+          400: '#c1d088',
+          500: '#BCD13B',
+          600: '#96a72f',
+          700: '#707d23',
+          800: '#4a5317',
+          900: '#24290b',
+        },
+        sage: {
+          DEFAULT: '#C4CCB8',
+          50: '#f5f7f3',
+          100: '#e8ede3',
+          200: '#dbe3d3',
+          300: '#ced9c3',
+          400: '#c1cfb3',
+          500: '#C4CCB8',
+          600: '#9da393',
+          700: '#767a6e',
+          800: '#4f5149',
+          900: '#282824',
+        },
+        olive: {
+          DEFAULT: '#747A66',
+          50: '#f0f1ef',
+          100: '#d8dbd3',
+          200: '#c0c5b7',
+          300: '#a8af9b',
+          400: '#90997f',
+          500: '#747A66',
+          600: '#5d6252',
+          700: '#464a3e',
+          800: '#2f322a',
+          900: '#181a16',
+        },
+        charcoal: {
+          DEFAULT: '#282021',
+          50: '#f5f4f4',
+          100: '#e0dddd',
+          200: '#cbc6c6',
+          300: '#b6afaf',
+          400: '#a19898',
+          500: '#8c8181',
+          600: '#706a6a',
+          700: '#545353',
+          800: '#383c3c',
+          900: '#282021',
+        },
+      },
+      fontFamily: {
+        sans: ['var(--font-overpass)', '"Overpass"', 'system-ui', 'sans-serif'],
+      },
+    },
+  },
+  plugins: [],
+}
+export default config
+

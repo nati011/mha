@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-white text-gray-900 antialiased;
+    font-family: var(--font-overpass), "Overpass", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  
+  h1 {
+    letter-spacing: -0.02em;
+  }
+  
+  p {
+    @apply leading-relaxed;
+    font-weight: 400;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-500 text-white px-8 py-3.5 rounded-full font-semibold hover:bg-primary-600 transition-all duration-200 shadow-sm hover:shadow-md text-base;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-primary-500 px-8 py-3.5 rounded-full font-semibold border-2 border-primary-500 hover:bg-primary-50 transition-all duration-200 text-base;
+  }
+  
+  .section-padding {
+    @apply py-20 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-custom {
+    @apply max-w-7xl mx-auto;
+  }
+  
+  /* BetterHelp-style card */
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-8 hover:shadow-md transition-shadow duration-200;
+  }
+  
+  /* Softer gradients */
+  .gradient-primary {
+    @apply bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700;
+  }
+  
+  .gradient-accent {
+    @apply bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-500;
+  }
+  
+  /* Bell ringing animation */
+  @keyframes bell-ring {
+    0%, 25%, 100% { transform: rotate(0deg); }
+    2.5% { transform: rotate(-10deg); }
+    5% { transform: rotate(10deg); }
+    7.5% { transform: rotate(-10deg); }
+    10% { transform: rotate(10deg); }
+    12.5% { transform: rotate(0deg); }
+  }
+  
+  .animate-bell-ring {
+    animation: bell-ring 2s ease-in-out infinite;
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+

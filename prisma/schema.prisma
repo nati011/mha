@@ -1,0 +1,343 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Event {
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String
+  date          String
+  time          String
+  endTime       String?
+  venue         String
+  isFree        Boolean        @default(true)
+  entranceFee   Float?
+  capacity      Int?
+  status        String?        // 'upcoming', 'past', 'closed' - calculated field, stored for performance
+  category      String?        // Event category
+  tags          String?        // Comma-separated tags
+  isRecurring   Boolean        @default(false)
+  recurrencePattern String?    // daily, weekly, monthly, etc.
+  recurrenceEndDate String?    // When recurrence ends
+  parentEventId Int?           // For recurring event series
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  attendees     Attendee[]
+  panelists     Panelist[]
+  campaigns     Campaign[]
+  waitlist      Waitlist[]
+  feedback      EventFeedback[]
+  parentEvent   Event?         @relation("EventSeries", fields: [parentEventId], references: [id], onDelete: SetNull)
+  childEvents   Event[]        @relation("EventSeries")
+  recordings    Recording[]
+
+  @@index([category])
+  @@index([status])
+  @@index([parentEventId])
+}
+
+model Attendee {
+  id                   Int      @id @default(autoincrement())
+  eventId              Int
+  name                 String
+  email                String
+  phone                String
+  occupation           String?
+  emergencyContact     String?
+  ageRange             String?
+  howHeardAbout        String?
+  attended             Boolean  @default(false)
+  attendedAt           DateTime?
+  signature            String?  // Base64 encoded signature image
+  createdAt            DateTime  @default(now())
+  event                Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  campaignRecipients   CampaignRecipient[]
+
+  @@index([eventId])
+  @@index([email])
+  @@index([attended])
+}
+
+model Panelist {
+  id          Int      @id @default(autoincrement())
+  eventId     Int
+  name        String
+  role        String
+  description String
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}
+
+model Recording {
+  id          Int      @id @default(autoincrement())
+  eventId     Int?     // Optional - recordings can exist without events
+  title       String
+  description String?
+  url         String
+  thumbnail   String?  // URL to thumbnail image
+  duration    String?  // Video duration (e.g., "1:23:45")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  event       Event?   @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([eventId])
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  sessionId String   @unique
+  username  String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([username])
+  @@index([expiresAt])
+}
+
+model Campaign {
+  id              Int       @id @default(autoincrement())
+  name            String
+  type            String    // 'event' or 'announcement'
+  message         String
+  eventId         Int?
+  scheduledFor    DateTime?
+  status          String    @default("draft") // 'draft', 'scheduled', 'sent'
+  sentAt          DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  event           Event?    @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  recipients      CampaignRecipient[]
+
+  @@index([eventId])
+  @@index([type])
+  @@index([status])
+}
+
+model CampaignRecipient {
+  id          Int      @id @default(autoincrement())
+  campaignId  Int
+  attendeeId  Int?
+  phoneNumber String
+  name        String?
+  status      String   @default("pending") // 'pending', 'sent', 'failed'
+  sentAt      DateTime?
+  error       String?
+  createdAt   DateTime  @default(now())
+  campaign    Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  attendee    Attendee? @relation(fields: [attendeeId], references: [id], onDelete: SetNull)
+
+  @@index([campaignId])
+  @@index([attendeeId])
+}
+
+model BlogPost {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  excerpt     String?  // Short description/preview
+  content     String   // Full blog post content (markdown or HTML)
+  featuredImage String? // URL to featured image
+  author      String?  // Author name
+  category    String?  // Blog category
+  tags        String?  // Comma-separated tags
+  published   Boolean  @default(false)
+  publishedAt DateTime?
+  views       Int      @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([published])
+  @@index([publishedAt])
+  @@index([category])
+}
+
+model Waitlist {
+  id          Int      @id @default(autoincrement())
+  eventId    Int
+  name        String
+  email       String
+  phone       String?
+  notified    Boolean  @default(false)
+  promoted    Boolean  @default(false)
+  promotedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([email])
+}
+
+model EventFeedback {
+  id          Int      @id @default(autoincrement())
+  eventId    Int
+  attendeeId Int?      // If linked to attendee
+  name        String?
+  email       String?
+  rating      Int?     // 1-5 stars
+  feedback    String   // Text feedback
+  type        String   @default("comment") // 'question' or 'comment'
+  anonymous   Boolean  @default(false)
+  createdAt   DateTime  @default(now())
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([type])
+  @@index([rating])
+}
+
+model Volunteer {
+  id          Int      @id @default(autoincrement())
+  memberId    Int      @unique
+  roles       String?  // Comma-separated roles
+  skills      String?  // Skills for matching
+  availability String? // When available
+  hoursWorked Float    @default(0)
+  status      String   @default("active") // active, inactive, on-leave
+  joinedAt    DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  member      Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  assignments VolunteerAssignment[]
+
+  @@index([memberId])
+  @@index([status])
+}
+
+model VolunteerAssignment {
+  id          Int      @id @default(autoincrement())
+  volunteerId Int
+  eventId     Int?
+  task        String   // Task description
+  role        String   // Role assigned
+  status      String   @default("assigned") // assigned, completed, cancelled
+  hours       Float?
+  notes       String?
+  assignedAt  DateTime  @default(now())
+  completedAt DateTime?
+  volunteer   Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+
+  @@index([volunteerId])
+  @@index([eventId])
+}
+
+model Resource {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  fileUrl     String?  // URL to file
+  fileType    String?  // pdf, doc, image, etc.
+  category    String?  // Category
+  tags        String?  // Comma-separated tags
+  accessLevel String   @default("public") // public, member-only, admin-only
+  downloadCount Int    @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([category])
+  @@index([accessLevel])
+}
+
+model Newsletter {
+  id          Int      @id @default(autoincrement())
+  name        String
+  subject     String
+  content     String   // HTML content
+  status      String   @default("draft") // draft, scheduled, sent
+  scheduledFor DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  subscribers NewsletterSubscriber[]
+
+  @@index([status])
+  @@index([scheduledFor])
+}
+
+model NewsletterSubscriber {
+  id          Int      @id @default(autoincrement())
+  newsletterId Int
+  email       String
+  name        String?
+  status      String   @default("subscribed") // subscribed, unsubscribed, bounced
+  subscribedAt DateTime  @default(now())
+  unsubscribedAt DateTime?
+  newsletter  Newsletter @relation(fields: [newsletterId], references: [id], onDelete: Cascade)
+
+  @@index([newsletterId])
+  @@index([email])
+}
+
+model Story {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  authorName  String?  // Can be anonymous
+  authorEmail String?
+  anonymous   Boolean  @default(true)
+  category    String?  // Category/tag
+  featured    Boolean  @default(false)
+  status      String   @default("pending") // pending, approved, rejected
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  views       Int      @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([featured])
+  @@index([category])
+}
+
+model Member {
+  id              Int      @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  email           String
+  phone           String?
+  dateOfBirth     String?
+  address         String?
+  city            String?
+  occupation      String?
+  education       String?
+  interests       String?
+  motivation      String   // Why they want to join
+  experience      String?  // Relevant experience
+  availability    String?  // When they're available
+  skills          String?  // Skills they can contribute
+  profilePicture  String?  // URL to profile picture
+  bio             String?  // User's bio/description
+  status          String   @default("pending") // 'pending', 'active', 'declined'
+  reviewedAt      DateTime?
+  reviewedBy      String?  // Admin username who reviewed
+  notes           String?  // Admin notes
+  directoryVisible Boolean @default(false) // Show in member directory
+  achievements    String?  // Comma-separated achievements/badges
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  volunteer       Volunteer?
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@index([directoryVisible])
+}
