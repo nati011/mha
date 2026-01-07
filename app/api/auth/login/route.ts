@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { verifyPassword, createSession } from '@/lib/auth'
+import { ensureAdminUser } from '@/lib/init-admin'
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,6 +21,11 @@ export async function POST(request: NextRequest) {
         { error: 'Database not configured' },
         { status: 500 }
       )
+    }
+
+    // Ensure admin user exists (code-based initialization, no migrations needed)
+    if (username === 'admin') {
+      await ensureAdminUser('admin', 'admin123')
     }
 
     const admin = await prisma.admin.findUnique({

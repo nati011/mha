@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { hashPassword } from '@/lib/auth'
+import { ensureAdminUser } from '@/lib/init-admin'
 
-// This endpoint seeds the default admin user
+// This endpoint seeds the default admin user using code-based initialization
 // It's safe to call multiple times (uses upsert)
 // Should be called after deployment or can be triggered automatically
 
@@ -40,12 +41,13 @@ export async function POST(request: NextRequest) {
     const username = 'admin'
     const password = 'admin123'
 
+    // Use code-based initialization (not migrations) to create/update admin user
     const passwordHash = await hashPassword(password)
 
     const admin = await prisma.admin.upsert({
       where: { username },
       update: {
-        passwordHash,
+        passwordHash, // Update password to ensure it's correct
       },
       create: {
         username,
@@ -55,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Admin user "${username}" created/updated successfully`,
+      message: `Admin user "${username}" initialized via code (not migrations)`,
       username: admin.username,
       createdAt: admin.createdAt,
     })

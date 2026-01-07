@@ -12,7 +12,7 @@
     "seed-admin:deploy": "tsx scripts/post-deploy-seed.ts",
     "check-admin": "tsx scripts/check-admin.ts",
     "postinstall": "prisma generate",
-    "setup": "prisma migrate deploy && npm run seed-admin"
+    "setup": "prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.2.0",
