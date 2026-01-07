@@ -19,7 +19,7 @@ export async function ensureAdminUser(
                       process.env.NEXT_PHASE === 'phase-development-build' ||
                       process.env.NEXT_PHASE === 'phase-export'
   
-  if (isBuildTime || !process.env.DATABASE_URL) {
+  if (isBuildTime || !process.env.DATABASE_URL || process.env.DATABASE_URL.trim() === '') {
     return false
   }
 

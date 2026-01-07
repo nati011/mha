@@ -54,6 +54,13 @@ export async function getSession(request: NextRequest): Promise<{ isAuthenticate
 
     return { isAuthenticated: true, username: session.username }
   } catch (error) {
+    // Handle PrismaClient initialization errors gracefully
+    if (error instanceof Error && error.message.includes('DATABASE_URL is not set')) {
+      return { isAuthenticated: false }
+    }
+    if (error instanceof Error && error.message.includes('cannot be used during build')) {
+      return { isAuthenticated: false }
+    }
     console.error('Error getting session:', error)
     return { isAuthenticated: false }
   }
@@ -85,6 +92,14 @@ export async function deleteSession(sessionId: string): Promise<void> {
       where: { sessionId }
     })
   } catch (error) {
+    // Handle PrismaClient initialization errors gracefully
+    if (error instanceof Error && (
+      error.message.includes('DATABASE_URL is not set') ||
+      error.message.includes('cannot be used during build')
+    )) {
+      // Silently fail - database not available
+      return
+    }
     console.error('Error deleting session:', error)
   }
 }
