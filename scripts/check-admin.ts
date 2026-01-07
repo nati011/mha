@@ -1,8 +1,8 @@
 import 'dotenv/config'
-import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { createPrismaClientWithAdapter } from '../lib/create-prisma-client'
 
-const prisma = new PrismaClient()
+const prisma = createPrismaClientWithAdapter()
 
 async function checkAdmin() {
   try {

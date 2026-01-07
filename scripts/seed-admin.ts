@@ -1,10 +1,9 @@
 import 'dotenv/config'
-import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { createPrismaClientWithAdapter } from '../lib/create-prisma-client'
 
-// Use standard PrismaClient - works with both PostgreSQL and SQLite
-// Prisma will automatically use DATABASE_URL from environment variables
-const prisma = new PrismaClient()
+// Use PrismaClient with PostgreSQL adapter (required for Prisma 7)
+const prisma = createPrismaClientWithAdapter()
 
 async function main() {
   const username = process.argv[2] || 'admin'

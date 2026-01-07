@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import { createPrismaClientWithAdapter } from '../lib/create-prisma-client'
 
 // This script is specifically for build-time seeding
 // It will only seed if DATABASE_URL is available
@@ -26,7 +27,7 @@ async function seedAdmin() {
   let prisma: PrismaClient | null = null
   
   try {
-    prisma = new PrismaClient()
+    prisma = createPrismaClientWithAdapter()
     
     const username = 'admin'
     const password = 'admin123'

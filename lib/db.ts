@@ -1,7 +1,6 @@
 import 'server-only'
 import { PrismaClient } from '@prisma/client'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { Pool } from 'pg'
+import { createPrismaClientWithAdapter } from './create-prisma-client'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -13,37 +12,8 @@ function createPrismaClient(): PrismaClient {
   // postgresql://user:password@host:port/database
   // Prisma 7 requires an adapter for PostgreSQL
   
-  // Check if DATABASE_URL is set before creating PrismaClient
-  const databaseUrl = process.env.DATABASE_URL?.trim()
-  if (!databaseUrl || databaseUrl === '') {
-    throw new Error('DATABASE_URL is not set. PrismaClient cannot be initialized without a database URL.')
-  }
-
-  // For Prisma 7 with PostgreSQL, we need to use the PostgreSQL adapter
-  try {
-    // Create a pg Pool connection
-    const pool = new Pool({
-      connectionString: databaseUrl,
-    })
-    
-    // Create the Prisma adapter
-    const adapter = new PrismaPg(pool)
-    
-    // Create PrismaClient with the adapter
-    return new PrismaClient({
-      adapter,
-      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-    })
-  } catch (error) {
-    // If PrismaClient creation fails, provide a more helpful error
-    if (error instanceof Error && (error.message.includes('adapter') || error.message.includes('accelerateUrl'))) {
-      throw new Error(
-        `PrismaClient initialization failed. DATABASE_URL is set but Prisma requires explicit configuration. ` +
-        `Please ensure DATABASE_URL is a valid PostgreSQL connection string: ${databaseUrl.substring(0, 20)}...`
-      )
-    }
-    throw error
-  }
+  // Use the shared helper function to create PrismaClient with adapter
+  return createPrismaClientWithAdapter()
 }
 
 function getPrismaClient(): PrismaClient {
