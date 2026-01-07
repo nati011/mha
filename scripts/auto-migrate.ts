@@ -7,13 +7,23 @@
 import 'dotenv/config'
 
 async function runMigrations() {
+  // Log environment for debugging
+  console.log('🔍 Migration script started')
+  console.log('   VERCEL:', process.env.VERCEL || 'not set')
+  console.log('   VERCEL_URL:', process.env.VERCEL_URL || 'not set')
+  console.log('   NEXT_PHASE:', process.env.NEXT_PHASE || 'not set')
+  console.log('   NODE_ENV:', process.env.NODE_ENV || 'not set')
+  
   const databaseUrl = process.env.DATABASE_URL?.trim()
   
   if (!databaseUrl || databaseUrl === '') {
     console.log('⚠️  DATABASE_URL not set - skipping migrations')
     console.log('   Migrations will need to be run manually after deployment')
-    process.exit(0) // Exit successfully - don't fail the build
+    process.exit(0) // Exit successfully
   }
+
+  // Log database URL (first part only for security)
+  console.log('   DATABASE_URL:', databaseUrl ? `${databaseUrl.substring(0, 30)}...` : 'not set')
 
   // Skip SQLite file URLs (local development)
   if (databaseUrl.startsWith('file:')) {
@@ -25,11 +35,14 @@ async function runMigrations() {
   // Only run migrations for PostgreSQL (production)
   if (!databaseUrl.startsWith('postgres://') && !databaseUrl.startsWith('postgresql://')) {
     console.log('⚠️  Non-PostgreSQL database URL - skipping migrations')
+    console.log(`   URL starts with: ${databaseUrl.substring(0, 20)}`)
     process.exit(0) // Exit successfully
   }
 
   // Check if we're on Vercel
   const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_URL
+  
+  console.log(`   Environment detected: ${isVercel ? 'Vercel' : 'Local/Other'}`)
   
   // On Vercel, always try to run migrations during build
   // For local builds, we'll still try but be more lenient with errors
