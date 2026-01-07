@@ -147,7 +147,7 @@ export default async function Home() {
                     </Link>
                   </div>
                 ) : (
-                  upcomingEvents.map((event, index) => {
+                  upcomingEvents.map((event: typeof upcomingEvents[0], index: number) => {
                     const rotationClasses = [
                       'transform rotate-1 hover:rotate-0',
                       'transform -rotate-1 hover:rotate-0',
