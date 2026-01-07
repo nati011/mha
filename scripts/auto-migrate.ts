@@ -49,7 +49,7 @@ async function runMigrations() {
 
   try {
     const { execSync } = require('child_process')
-d    const fs = require('fs')
+    const fs = require('fs')
     const path = require('path')
     
     // Check if migrations exist (other than lock file)
