@@ -42,12 +42,37 @@ export async function GET(request: NextRequest) {
 
     // Calculate and add status to each event
     const now = new Date()
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    
     const eventsWithStatus = events.map((event: typeof events[0]) => {
-      const eventDate = new Date(event.date)
+      // Parse event date - handle both date-only and datetime strings
+      let eventDate: Date
+      const dateStr = event.date.trim()
+      
+      try {
+        eventDate = new Date(dateStr)
+        if (isNaN(eventDate.getTime())) {
+          // Assume YYYY-MM-DD format and parse manually
+          const parts = dateStr.split('-')
+          if (parts.length === 3) {
+            const year = parseInt(parts[0], 10)
+            const month = parseInt(parts[1], 10) - 1
+            const day = parseInt(parts[2], 10)
+            eventDate = new Date(year, month, day)
+          } else {
+            eventDate = new Date(dateStr)
+          }
+        }
+      } catch (e) {
+        eventDate = new Date()
+      }
+      
+      const eventDateStart = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
       const attendeeCount = event.attendees.length
       
       let status = 'upcoming'
-      if (eventDate < now) {
+      // Event is past if its date is before today
+      if (eventDateStart < todayStart) {
         status = 'past'
       } else if (event.capacity && attendeeCount >= event.capacity) {
         status = 'closed'
