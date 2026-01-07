@@ -31,8 +31,19 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error(e)
-    process.exit(1)
+    // During build, don't fail if DATABASE_URL is not set or database is unavailable
+    const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build' || 
+                        process.env.NEXT_PHASE === 'phase-development-build' ||
+                        process.env.NEXT_PHASE === 'phase-export'
+    
+    if (isBuildTime || !process.env.DATABASE_URL) {
+      console.warn('Skipping admin seed during build (DATABASE_URL not set or database unavailable)')
+      console.warn('Admin user will need to be created manually after deployment')
+      process.exit(0) // Exit successfully during build
+    } else {
+      console.error('Error seeding admin user:', e)
+      process.exit(1) // Fail in other contexts
+    }
   })
   .finally(async () => {
     await prisma.$disconnect()
