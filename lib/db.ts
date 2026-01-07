@@ -26,7 +26,7 @@ function createPrismaClient(): PrismaClient {
     })
   } catch (error) {
     // If PrismaClient creation fails, provide a more helpful error
-    if (error instanceof Error && error.message.includes('adapter') || error.message.includes('accelerateUrl')) {
+    if (error instanceof Error && (error.message.includes('adapter') || error.message.includes('accelerateUrl'))) {
       throw new Error(
         `PrismaClient initialization failed. DATABASE_URL is set but Prisma requires explicit configuration. ` +
         `Please ensure DATABASE_URL is a valid PostgreSQL connection string: ${databaseUrl.substring(0, 20)}...`
