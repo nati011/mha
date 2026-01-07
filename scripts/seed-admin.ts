@@ -1,12 +1,10 @@
 import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 import bcrypt from 'bcryptjs'
 
-const databaseUrl = process.env.DATABASE_URL || 'file:./prisma/dev.db'
-const dbPath = databaseUrl.replace(/^file:/, '')
-const adapter = new PrismaBetterSqlite3({ url: dbPath })
-const prisma = new PrismaClient({ adapter })
+// Use standard PrismaClient - works with both PostgreSQL and SQLite
+// Prisma will automatically use DATABASE_URL from environment variables
+const prisma = new PrismaClient()
 
 async function main() {
   const username = process.argv[2] || 'admin'

@@ -12,35 +12,21 @@
    npx prisma migrate dev
    ```
 
-3. **Create an admin user:**
-   
-   Option A - Using Prisma Studio (Recommended):
+3. **Create the default admin user:**
    ```bash
-   npx prisma studio
-   ```
-   Then navigate to the Admin table and create a new admin user. The passwordHash should be generated using bcrypt. You can use this Node.js snippet:
-   ```javascript
-   const bcrypt = require('bcryptjs');
-   bcrypt.hash('yourpassword', 10).then(console.log);
+   npm run seed-admin
    ```
    
-   Option B - Using a temporary script:
-   Create a file `create-admin.js`:
-   ```javascript
-   const { PrismaClient } = require('@prisma/client');
-   const bcrypt = require('bcryptjs');
-   const prisma = new PrismaClient();
+   This creates the default admin user:
+   - **Username**: `admin`
+   - **Password**: `admin123`
    
-   async function main() {
-     const hash = await bcrypt.hash('admin123', 10);
-     const admin = await prisma.admin.create({
-       data: { username: 'admin', passwordHash: hash }
-     });
-     console.log('Admin created:', admin);
-   }
-   main();
+   ⚠️ **Important**: Change the default password after first login!
+   
+   You can also create a custom admin user:
+   ```bash
+   npm run seed-admin myusername mypassword
    ```
-   Then run: `node create-admin.js`
 
 4. **Start the development server:**
    ```bash

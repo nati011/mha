@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "seed-admin": "tsx scripts/seed-admin.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "setup": "prisma migrate deploy && npm run seed-admin"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.2.0",
