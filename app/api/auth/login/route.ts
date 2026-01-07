@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { verifyPassword, createSession } from '@/lib/auth'
-import { ensureAdminUser } from '@/lib/init-admin'
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,16 +22,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Ensure admin user exists (code-based initialization, no migrations needed)
-    // Silently fail if admin creation fails - don't block login
-    if (username === 'admin') {
-      try {
-        await ensureAdminUser('admin', 'admin123')
-      } catch (error) {
-        // Log but don't fail - admin might already exist or there might be a connection issue
-        console.warn('Could not ensure admin user (non-fatal):', error instanceof Error ? error.message : error)
-      }
-    }
+    // Removed auto-seeding - admin user must be created manually or via seed script
 
     const admin = await prisma.admin.findUnique({
       where: { username },

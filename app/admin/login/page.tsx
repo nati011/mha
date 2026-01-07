@@ -11,29 +11,7 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Auto-initialize admin user on mount (code-based, no migrations needed)
-  useEffect(() => {
-    const initializeAdmin = async () => {
-      try {
-        // Call seed endpoint which uses code-based initialization
-        const response = await fetch('/api/admin/seed', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        })
-        
-        if (response.ok) {
-          const result = await response.json()
-          console.log('✅ Admin user initialized via code:', result.message)
-        }
-      } catch (err) {
-        // Silently fail - admin might already exist or database not ready
-        // This is expected and not an error
-      }
-    }
-
-    // Only initialize once when component mounts
-    initializeAdmin()
-  }, [])
+  // Removed auto-seeding - admin user must be created manually
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
