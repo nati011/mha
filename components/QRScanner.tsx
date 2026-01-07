@@ -104,3 +104,4 @@ export default function QRScanner({ onScan, onClose, title = 'Scan QR Code' }: Q
 }
 
 
+
