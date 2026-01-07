@@ -61,7 +61,7 @@ async function getEvents() {
         eventDate = new Date()
       }
       
-      // Get date-only (start of day) for comparison
+      // Get date-only (start of day) for comparison - use local timezone
       const eventDateStart = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
       const attendeeCount = event.attendees.length
       
@@ -71,6 +71,11 @@ async function getEvents() {
         status = 'past'
       } else if (event.capacity && attendeeCount >= event.capacity) {
         status = 'closed'
+      }
+      
+      // Debug logging
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Event: "${event.title}" | Date: "${dateStr}" | Parsed: ${eventDateStart.toISOString().split('T')[0]} | Today: ${todayStart.toISOString().split('T')[0]} | Status: ${status}`)
       }
       
       return {

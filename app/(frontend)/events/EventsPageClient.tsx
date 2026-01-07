@@ -27,12 +27,30 @@ interface Event {
 export default function EventsPageClient({ events: initialEvents }: { events: Event[] }) {
   const [filter, setFilter] = useState<'upcoming' | 'past'>('upcoming')
   
-  const filteredEvents = initialEvents.filter((event) => {
-    return event.status === filter
-  })
+  const filteredEvents = initialEvents
+    .filter((event) => {
+      return event.status === filter
+    })
+    .sort((a, b) => {
+      // For past events, show newest first (descending by date)
+      // For upcoming events, show soonest first (ascending by date)
+      const dateA = new Date(a.date).getTime()
+      const dateB = new Date(b.date).getTime()
+      return filter === 'past' ? dateB - dateA : dateA - dateB
+    })
   
   const upcomingCount = initialEvents.filter((e) => e.status === 'upcoming').length
   const pastCount = initialEvents.filter((e) => e.status === 'past').length
+  
+  // Debug logging
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    console.log('EventsPageClient - Total events:', initialEvents.length)
+    console.log('EventsPageClient - Upcoming count:', upcomingCount)
+    console.log('EventsPageClient - Past count:', pastCount)
+    console.log('EventsPageClient - Current filter:', filter)
+    console.log('EventsPageClient - Filtered events:', filteredEvents.length)
+    console.log('EventsPageClient - All events with status:', initialEvents.map(e => ({ title: e.title, date: e.date, status: e.status })))
+  }
 
   const eventTypes = [
     {
