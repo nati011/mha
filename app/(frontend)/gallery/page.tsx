@@ -9,7 +9,7 @@ export default function GalleryPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
   // Get unique categories
-  const categories = ['all', ...new Set(galleryImages.map(img => img.category).filter(Boolean))]
+  const categories = ['all', ...new Set(galleryImages.map(img => img.category).filter((cat): cat is string => Boolean(cat)))]
 
   // Filter images by category
   const filteredImages = selectedCategory === 'all'
