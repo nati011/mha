@@ -31,6 +31,11 @@ interface Event {
   panelists?: Panelist[]
   category?: string | null
   tags?: string | null
+  chapter?: {
+    id: number
+    name: string
+    location: string | null
+  } | null
 }
 
 export default function EventDetailPage() {
@@ -250,6 +255,16 @@ export default function EventDetailPage() {
                 <div className="flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-primary-600" />
                   <span className="text-lg text-gray-900">{event.venue}</span>
+                </div>
+              )}
+              {/* Chapter Information (if available) */}
+              {event.chapter && (
+                <div className="mt-3 flex items-center gap-2 text-sm text-gray-600">
+                  <span className="font-medium">Hosted by:</span>
+                  <span className="text-primary-600 font-semibold">
+                    {event.chapter.name}
+                    {event.chapter.location && ` - ${event.chapter.location}`}
+                  </span>
                 </div>
               )}
             </div>

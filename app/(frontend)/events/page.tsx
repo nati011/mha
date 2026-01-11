@@ -51,6 +51,13 @@ async function getEvents() {
           },
           orderBy: { createdAt: 'asc' },
         },
+        chapter: {
+          select: {
+            id: true,
+            name: true,
+            location: true,
+          },
+        },
       },
     })
     

@@ -22,6 +22,11 @@ interface Event {
   attendees?: { id: number }[]
   panelists?: Panelist[]
   status?: string
+  chapter?: {
+    id: number
+    name: string
+    location: string | null
+  } | null
 }
 
 interface EventCardProps {

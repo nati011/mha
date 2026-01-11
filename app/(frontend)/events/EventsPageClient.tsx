@@ -22,6 +22,11 @@ interface Event {
     role: string
     image: string | null
   }>
+  chapter?: {
+    id: number
+    name: string
+    location: string | null
+  } | null
 }
 
 export default function EventsPageClient({ events: initialEvents }: { events: Event[] }) {
