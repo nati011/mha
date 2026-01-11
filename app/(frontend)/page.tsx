@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle, Calendar, MapPin, Clock, Heart, Users, BookOpe
 import { prisma } from '@/lib/db'
 import { isUrl } from '@/lib/utils'
 import EventCard from '@/components/EventCard'
+import PartnersSection from '@/components/PartnersSection'
 
 async function getUpcomingEvents() {
   try {
@@ -216,7 +217,7 @@ export default async function Home() {
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 mb-10 font-normal leading-relaxed">
                 We raise awareness, dismantle stigma, and create safe spaces for
-                meaningful discussions about mental health in Addis Ababa and beyond.
+                meaningful discussions about mental health in Ethiopia and beyond.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link
@@ -318,7 +319,7 @@ export default async function Home() {
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               We're dedicated to creating a supportive community where mental health is understood, 
-              accepted, and prioritized in Addis Ababa and beyond.
+              accepted, and prioritized in Ethiopia and beyond.
             </p>
           </div>
           
@@ -356,6 +357,9 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Partners Section */}
+      <PartnersSection />
+
       {/* CTA Section - BetterHelp Style */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
         {/* Flowing divider */}
@@ -376,7 +380,7 @@ export default async function Home() {
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Join our community working to transform mental health awareness in Addis Ababa.
+            Join our community working to transform mental health awareness in Ethiopia.
           </h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
             <Link

@@ -12,6 +12,7 @@ export default function Header() {
     { href: '/', label: 'Home' },
     { href: '/events', label: 'Events' },
     { href: '/resources', label: 'Blog' },
+    { href: '/gallery', label: 'Gallery' },
     { href: '/about', label: 'About Us' },
     { href: '/contact', label: 'Contact' },
   ]
@@ -25,7 +26,7 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            {navLinks.slice(0, 5).map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

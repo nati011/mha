@@ -167,10 +167,10 @@ export default function ContactPage() {
                 Phone
               </h3>
               <a
-                href="tel:+251911234567"
+                href="tel:+251984252627"
                 className="text-gray-700 hover:text-gray-900 font-medium transition-colors block"
               >
-                +251 911 234 567
+                0984252627
               </a>
             </div>
           </div>

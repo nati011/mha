@@ -10,7 +10,7 @@ const overpass = Overpass({
 
 export const metadata: Metadata = {
   title: 'Mental Health Addis - Empowering Minds, Building Community',
-  description: 'We raise awareness, dismantle stigma, and create safe spaces for meaningful discussions about mental health in Addis Ababa and beyond.',
+  description: 'We raise awareness, dismantle stigma, and create safe spaces for meaningful discussions about mental health in Ethiopia and beyond.',
 }
 
 export default function RootLayout({
