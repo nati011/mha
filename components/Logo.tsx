@@ -8,7 +8,7 @@ interface LogoProps {
 export default function Logo({ href, className = 'inline-block group' }: LogoProps) {
   const image = (
     <img
-      src="/logo.svg"
+      src="/Mental Health Addis Logo.svg"
       alt="Mental Health Addis"
       className="h-10 w-auto md:h-12"
     />
