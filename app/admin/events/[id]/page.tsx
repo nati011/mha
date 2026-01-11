@@ -22,10 +22,16 @@ interface Event {
   time: string
   endTime: string | null
   venue: string
+  chapterId: number | null
   isFree: boolean
   entranceFee: number | null
   capacity: number | null
   panelists?: Panelist[]
+  chapter?: {
+    id: number
+    name: string
+    location: string | null
+  } | null
 }
 
 export default function EditEventPage() {
@@ -37,6 +43,7 @@ export default function EditEventPage() {
   const [error, setError] = useState('')
   const [formData, setFormData] = useState<Event | null>(null)
   const [panelists, setPanelists] = useState<Panelist[]>([])
+  const [chapters, setChapters] = useState<Array<{ id: number; name: string; location: string | null }>>([])
 
   useEffect(() => {
     if (eventId === 'new') {
@@ -45,7 +52,22 @@ export default function EditEventPage() {
     }
 
     fetchEvent()
+    fetchChapters()
   }, [eventId])
+
+  const fetchChapters = async () => {
+    try {
+      const response = await fetch('/api/admin/chapters', {
+        credentials: 'include',
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setChapters(data.filter((c: any) => c.isActive))
+      }
+    } catch (err) {
+      console.error('Failed to fetch chapters:', err)
+    }
+  }
 
   const fetchEvent = async () => {
     try {
@@ -69,6 +91,7 @@ export default function EditEventPage() {
         capacity: event.capacity || '',
         entranceFee: event.entranceFee || '',
         endTime: event.endTime || '',
+        chapterId: event.chapterId || null,
       })
       setPanelists(event.panelists && event.panelists.length > 0 ? event.panelists : [{ name: '', role: '', description: '', image: null }])
     } catch (err) {
@@ -109,6 +132,7 @@ export default function EditEventPage() {
         credentials: 'include',
         body: JSON.stringify({
           ...formData,
+          chapterId: formData.chapterId || null,
           capacity: formData.capacity ? parseInt(String(formData.capacity)) : null,
           entranceFee: formData.isFree ? null : (formData.entranceFee ? parseFloat(String(formData.entranceFee)) : null),
           panelists: panelists.filter(p => p.name.trim() !== '' && p.role.trim() !== ''),
@@ -278,6 +302,28 @@ export default function EditEventPage() {
               />
               <p className="mt-1 text-xs text-gray-500">
                 You can enter an address or paste a Google Maps link
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="chapterId" className="block text-sm font-medium text-gray-700 mb-2">
+                Chapter (optional)
+              </label>
+              <select
+                id="chapterId"
+                value={formData.chapterId || ''}
+                onChange={(e) => setFormData({ ...formData, chapterId: e.target.value ? parseInt(e.target.value) : null })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              >
+                <option value="">No Chapter</option>
+                {chapters.map((chapter) => (
+                  <option key={chapter.id} value={chapter.id}>
+                    {chapter.name}{chapter.location ? ` - ${chapter.location}` : ''}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                Select the chapter hosting this event
               </p>
             </div>
 

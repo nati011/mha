@@ -23,6 +23,7 @@ export default function NewEventPage() {
     time: '',
     endTime: '',
     venue: '',
+    chapterId: '',
     isFree: true,
     entranceFee: '',
     capacity: '',
@@ -35,10 +36,26 @@ export default function NewEventPage() {
   const [panelists, setPanelists] = useState<Panelist[]>([{ name: '', role: '', description: '', image: '' }])
   const [createCampaign, setCreateCampaign] = useState(false)
   const [campaignMessage, setCampaignMessage] = useState('')
+  const [chapters, setChapters] = useState<Array<{ id: number; name: string; location: string | null }>>([])
 
   useEffect(() => {
     checkAuth()
+    fetchChapters()
   }, [])
+
+  const fetchChapters = async () => {
+    try {
+      const response = await fetch('/api/admin/chapters', {
+        credentials: 'include',
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setChapters(data.filter((c: any) => c.isActive))
+      }
+    } catch (err) {
+      console.error('Failed to fetch chapters:', err)
+    }
+  }
 
   const checkAuth = async () => {
     const authCheck = await fetch('/api/auth/check', {
@@ -78,6 +95,7 @@ export default function NewEventPage() {
         credentials: 'include',
         body: JSON.stringify({
           ...formData,
+          chapterId: formData.chapterId || null,
           capacity: formData.capacity ? parseInt(formData.capacity) : null,
           entranceFee: formData.isFree ? null : (formData.entranceFee ? parseFloat(formData.entranceFee) : null),
           endTime: formData.endTime || null,
@@ -239,6 +257,28 @@ export default function NewEventPage() {
               />
               <p className="mt-1 text-xs text-gray-500">
                 You can enter an address or paste a Google Maps link
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="chapterId" className="block text-sm font-medium text-gray-700 mb-2">
+                Chapter (optional)
+              </label>
+              <select
+                id="chapterId"
+                value={formData.chapterId}
+                onChange={(e) => setFormData({ ...formData, chapterId: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              >
+                <option value="">No Chapter</option>
+                {chapters.map((chapter) => (
+                  <option key={chapter.id} value={chapter.id}>
+                    {chapter.name}{chapter.location ? ` - ${chapter.location}` : ''}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                Select the chapter hosting this event
               </p>
             </div>
 

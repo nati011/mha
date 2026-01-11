@@ -17,7 +17,8 @@ import {
   UserCheck,
   FileText,
   BookOpen,
-  Video
+  Video,
+  MapPin
 } from 'lucide-react'
 import Logo from '@/components/Logo'
 
@@ -119,6 +120,7 @@ export default function AdminLayout({
   const navItems = [
     { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/events', label: 'Events', icon: Calendar },
+    { href: '/admin/chapters', label: 'Chapters', icon: MapPin },
     { href: '/admin/recordings', label: 'Recordings', icon: Video },
     { href: '/admin/attendance', label: 'Attendance', icon: ClipboardCheck },
     { href: '/admin/campaigns', label: 'Campaigns', icon: MessageSquare },

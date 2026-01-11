@@ -39,6 +39,13 @@ export async function GET(request: NextRequest) {
             type: true,
           },
         },
+        chapter: {
+          select: {
+            id: true,
+            name: true,
+            location: true,
+          },
+        },
       },
     })
 
@@ -122,7 +129,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { title, description, date, time, endTime, venue, isFree, entranceFee, capacity, category, tags, isRecurring, recurrencePattern, recurrenceEndDate, panelists } = body
+    const { title, description, date, time, endTime, venue, chapterId, isFree, entranceFee, capacity, category, tags, isRecurring, recurrencePattern, recurrenceEndDate, panelists } = body
 
     if (!title || !description || !date || !time || !venue) {
       return NextResponse.json(
@@ -154,6 +161,7 @@ export async function POST(request: NextRequest) {
         time,
         endTime: endTime || null,
         venue,
+        chapterId: chapterId ? Number.parseInt(chapterId) : null,
         isFree: isFree ?? true,
         entranceFee: isFree ? null : (entranceFee ? parseFloat(entranceFee) : null),
         capacity: capacity ? Number.parseInt(capacity) : null,
@@ -173,6 +181,13 @@ export async function POST(request: NextRequest) {
       },
       include: {
         panelists: true,
+        chapter: {
+          select: {
+            id: true,
+            name: true,
+            location: true,
+          },
+        },
       },
     })
 

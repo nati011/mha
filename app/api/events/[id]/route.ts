@@ -23,6 +23,13 @@ export async function GET(
         panelists: {
           orderBy: { createdAt: 'asc' },
         },
+        chapter: {
+          select: {
+            id: true,
+            name: true,
+            location: true,
+          },
+        },
       },
     })
 
@@ -73,7 +80,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { title, description, date, time, endTime, venue, isFree, entranceFee, capacity, category, tags, isRecurring, recurrencePattern, recurrenceEndDate, panelists } = body
+    const { title, description, date, time, endTime, venue, chapterId, isFree, entranceFee, capacity, category, tags, isRecurring, recurrencePattern, recurrenceEndDate, panelists } = body
 
     if (!isFree && (!entranceFee || entranceFee <= 0)) {
       return NextResponse.json(
@@ -104,6 +111,7 @@ export async function PUT(
         ...(time && { time }),
         ...(endTime !== undefined && { endTime: endTime || null }),
         ...(venue && { venue }),
+        ...(chapterId !== undefined && { chapterId: chapterId ? Number.parseInt(chapterId) : null }),
         ...(isFree !== undefined && { isFree }),
         ...(entranceFee !== undefined && { entranceFee: isFree ? null : (entranceFee ? parseFloat(entranceFee) : null) }),
         ...(capacity !== undefined && { capacity: capacity ? Number.parseInt(capacity) : null }),
@@ -123,6 +131,13 @@ export async function PUT(
       },
       include: {
         panelists: true,
+        chapter: {
+          select: {
+            id: true,
+            name: true,
+            location: true,
+          },
+        },
       },
     })
 
