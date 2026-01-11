@@ -5,6 +5,47 @@
  */
 
 import 'dotenv/config'
+import { createPrismaClientWithAdapter } from '../lib/create-prisma-client'
+
+/**
+ * Resolve failed migrations before running new ones
+ */
+async function resolveFailedMigrations() {
+  try {
+    const prisma = createPrismaClientWithAdapter()
+    
+    // Check for the specific failed migration
+    const failedMigration = await prisma.$queryRaw<Array<{
+      migration_name: string
+      finished_at: Date | null
+    }>>`
+      SELECT "migration_name", "finished_at"
+      FROM "_prisma_migrations"
+      WHERE "migration_name" = '20260111065110_1'
+        AND "finished_at" IS NULL
+    `
+
+    if (failedMigration.length > 0) {
+      console.log('⚠️  Found failed migration: 20260111065110_1')
+      console.log('🔄 Marking as rolled back...')
+      
+      await prisma.$executeRaw`
+        UPDATE "_prisma_migrations"
+        SET "finished_at" = NOW(),
+            "rolled_back_at" = NOW()
+        WHERE "migration_name" = '20260111065110_1'
+          AND "finished_at" IS NULL
+      `
+      
+      console.log('✅ Failed migration resolved')
+    }
+    
+    await prisma.$disconnect()
+  } catch (error) {
+    // If we can't resolve, log but don't fail - let migrate deploy handle it
+    console.warn('⚠️  Could not auto-resolve failed migrations:', error instanceof Error ? error.message : String(error))
+  }
+}
 
 async function runMigrations() {
   // Log environment for debugging
@@ -65,6 +106,10 @@ async function runMigrations() {
     console.log(`   Database URL: ${databaseUrl.substring(0, 50)}...`)
     console.log(`   Working directory: ${process.cwd()}`)
     console.log(`   Migrations found: ${hasMigrations ? 'Yes' : 'No'}`)
+    
+    // Try to resolve any failed migrations first
+    console.log('🔍 Checking for failed migrations...')
+    await resolveFailedMigrations()
     
     let output: string
     
