@@ -12,10 +12,12 @@ export const partners: Partner[] = [
   {
     name: 'Embassy of Ireland',
     logo: '/embassy_of_ireland_logo.png',
+    url: 'https://www.ireland.ie/en/ethiopia/addisababa/'
   },
   {
     name: 'WaterAid',
     logo: '/water_aid_logo.png',
+    url: 'https://www.wateraid.org/et/'
   },
 ]
 
