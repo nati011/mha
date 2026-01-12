@@ -14,7 +14,6 @@ export default function Header() {
     { href: '/resources', label: 'Blog' },
     { href: '/gallery', label: 'Gallery' },
     { href: '/about', label: 'About Us' },
-    { href: '/contact', label: 'Contact' },
   ]
 
   return (
@@ -37,9 +36,9 @@ export default function Header() {
             ))}
             <Link
               href="/advocacy"
-              className="bg-primary-500 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-primary-600 transition-colors duration-200 text-sm"
+              className="inline-block bg-primary-500 text-white px-6 py-2.5 rounded-full font-semibold text-sm hover:bg-primary-600 transition-all duration-200 shadow-sm hover:shadow-md"
             >
-              Get Involved
+              Volunteer
             </Link>
           </div>
 

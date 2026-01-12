@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, CheckCircle, Calendar, MapPin, Clock, Heart, Users, BookOpen, Shield, Bell } from 'lucide-react'
+import { ArrowRight, CheckCircle, Calendar, MapPin, Clock, Heart, Users, BookOpen, Shield, Bell, Eye, Target } from 'lucide-react'
 import { prisma } from '@/lib/db'
 import { isUrl } from '@/lib/utils'
 import EventCard from '@/components/EventCard'
@@ -224,7 +224,7 @@ export default async function Home() {
                   href="/advocacy"
                   className="inline-block bg-primary-500 text-white px-10 py-4 rounded-full font-semibold text-lg hover:bg-primary-600 transition-all duration-200 shadow-sm hover:shadow-md transform rotate-1 hover:rotate-0"
                 >
-                  Get Involved
+                  Volunteer
                 </Link>
               </div>
             </div>
@@ -278,7 +278,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Mission Section */}
+      {/* Vision & Mission Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary-50 overflow-hidden">
         {/* Flowing divider - Top */}
         <div className="absolute top-0 left-0 right-0 h-24 overflow-hidden">
@@ -313,44 +313,29 @@ export default async function Home() {
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-              Our Mission
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We're dedicated to creating a supportive community where mental health is understood, 
-              accepted, and prioritized in Ethiopia and beyond.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 text-center transform -rotate-1 hover:rotate-0 transition-transform duration-300">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="w-8 h-8 text-primary-500" />
+          {/* Vision & Mission Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
+              <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mx-auto mb-6">
+                <Eye className="w-8 h-8 text-primary-500" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Safe Spaces</h3>
-              <p className="text-gray-600">
-                We create judgment-free environments where everyone feels comfortable sharing their experiences and seeking support.
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
+                Our Vision
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                We want to see a society that takes mental health as a fundamental priority, and place where individuals have awareness about mental health, and where stigma and discrimination surrounding mental health are reduced.
               </p>
             </div>
             
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 text-center transform rotate-2 hover:rotate-0 transition-transform duration-300">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-secondary-500" />
+            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 transform rotate-1 hover:rotate-0 transition-transform duration-300">
+              <div className="w-16 h-16 rounded-full bg-secondary-100 flex items-center justify-center mx-auto mb-6">
+                <Target className="w-8 h-8 text-secondary-500" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Community Support</h3>
-              <p className="text-gray-600">
-                Connect with others who understand your journey. Our community events and peer support groups bring people together.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 text-center transform -rotate-2 hover:rotate-0 transition-transform duration-300">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-primary-500" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Education & Resources</h3>
-              <p className="text-gray-600">
-                Access free educational materials, guides, and resources to support your mental health journey.
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
+                Our Mission
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                We're dedicated to creating a supportive community where mental health is understood, accepted, and prioritized in Ethiopia and beyond through public talks, arts, education, advocacy, community engagement and therapy.
               </p>
             </div>
           </div>

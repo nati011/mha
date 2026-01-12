@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
 import {
   HandHeart,
@@ -9,9 +12,94 @@ import {
   Mail,
   Calendar,
   Sparkles,
+  Send,
 } from 'lucide-react'
 
 export default function AdvocacyPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    availability: '',
+    activityType: '',
+    areasOfInterest: [] as string[],
+    willingToTravel: '',
+    message: '',
+  })
+  const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Validate that at least one area of interest is selected
+    if (formData.areasOfInterest.length === 0) {
+      alert('Please select at least one area of interest.')
+      return
+    }
+    
+    setIsSubmitting(true)
+    
+    try {
+      const response = await fetch('/api/volunteer-applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit application')
+      }
+
+      // Success - show success message
+      setSubmitted(true)
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        availability: '',
+        activityType: '',
+        areasOfInterest: [],
+        willingToTravel: '',
+        message: '',
+      })
+      setTimeout(() => setSubmitted(false), 5000)
+    } catch (error) {
+      console.error('Error submitting volunteer application:', error)
+      alert(error instanceof Error ? error.message : 'Failed to submit application. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target
+    setFormData({
+      ...formData,
+      [name]: value,
+    })
+  }
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target
+    if (checked) {
+      setFormData({
+        ...formData,
+        areasOfInterest: [...formData.areasOfInterest, value],
+      })
+    } else {
+      setFormData({
+        ...formData,
+        areasOfInterest: formData.areasOfInterest.filter((item) => item !== value),
+      })
+    }
+  }
   const waysToGetInvolved = [
     {
       icon: HandHeart,
@@ -112,243 +200,22 @@ export default function AdvocacyPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section with Flowing Lines */}
-      <section className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary-500 via-primary-600 to-primary-700 text-white overflow-hidden">
-        {/* Flowing decorative lines */}
-        <div className="absolute top-0 left-0 right-0 h-40 overflow-hidden opacity-20">
-          <svg 
-            className="absolute top-0 left-0 w-full h-full" 
-            viewBox="0 0 1200 160" 
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0,80 Q300,30 600,60 T1200,50 L1200,0 L0,0 Z"
-              fill="url(#gradient1)"
-            />
-            <path
-              d="M0,100 Q400,40 800,70 T1200,60 L1200,0 L0,0 Z"
-              fill="url(#gradient2)"
-            />
-            <path
-              d="M0,90 Q250,35 500,55 T1000,45 L1200,40 L1200,0 L0,0 Z"
-              fill="url(#gradient3)"
-            />
-            <defs>
-              <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
-                <stop offset="50%" stopColor="#BCD13B" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#ffffff" stopOpacity="0.3" />
-              </linearGradient>
-              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#BCD13B" stopOpacity="0.2" />
-                <stop offset="50%" stopColor="#ffffff" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#BCD13B" stopOpacity="0.2" />
-              </linearGradient>
-              <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#BCD13B" stopOpacity="0.15" />
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-
-        <div className="container-custom relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Get Involved
-            </h1>
-            <p className="text-xl text-primary-100 leading-relaxed">
-              Join our community of advocates, volunteers, and supporters
-              working to transform mental health awareness
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Ways to Get Involved */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
-        {/* Flowing divider */}
-        <div className="absolute top-0 left-0 right-0 h-24 overflow-hidden">
-          <svg 
-            className="absolute top-0 left-0 w-full h-full" 
-            viewBox="0 0 1200 100" 
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0,60 Q150,10 300,50 Q450,80 600,30 Q750,5 900,55 Q1050,85 1200,40 L1200,0 L0,0 Z"
-              fill="#e6f9e6"
-            />
-          </svg>
-        </div>
-        
-        <div className="container-custom relative z-10">
-          <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
-            Ways to Get Involved
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {waysToGetInvolved.map((way, index) => {
-              const rotations = ['rotate-1', '-rotate-1', 'rotate-2', '-rotate-2']
-              return (
-                <div
-                  key={way.title}
-                  className={`bg-gradient-to-br from-gray-50 to-white rounded-xl p-8 shadow-sm border-2 border-gray-100 hover:shadow-lg hover:border-primary-200 transition-all duration-300 transform ${rotations[index]} hover:rotate-0`}
-                >
-                  <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
-                    <way.icon className="w-8 h-8 text-primary-500" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                    {way.title}
-                  </h3>
-                  <p className="text-gray-600 mb-6">{way.description}</p>
-                  <ul className="space-y-2 mb-6">
-                    {way.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex items-start space-x-2 text-gray-700"
-                      >
-                        <CheckCircle className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href={way.link}
-                    className="inline-flex items-center text-primary-500 font-semibold hover:text-primary-600 transition-colors group"
-                  >
-                    {way.cta}
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Volunteer Roles Section */}
+      {/* Hero Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary-50 overflow-hidden">
-        {/* Flowing divider */}
-        <div className="absolute top-0 left-0 right-0 h-24 overflow-hidden">
-          <svg 
-            className="absolute top-0 left-0 w-full h-full" 
-            viewBox="0 0 1200 100" 
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0,40 Q150,80 300,50 Q450,10 600,60 Q750,90 900,35 Q1050,5 1200,55 L1200,0 L0,0 Z"
-              fill="white"
-            />
-          </svg>
-        </div>
-        
         <div className="container-custom relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4 text-center">
-              Volunteer Opportunities
-            </h2>
-            <p className="text-lg text-gray-600 mb-12 text-center">
-              We have various volunteer roles available. Find one that matches
-              your interests, skills, and availability.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {volunteerRoles.map((role, index) => {
-                const rotations = ['rotate-1', '-rotate-1', 'rotate-0.5', '-rotate-0.5', 'rotate-1', '-rotate-1']
-                return (
-                  <div
-                    key={role.title}
-                    className={`bg-white p-6 rounded-xl shadow-md border-2 border-gray-100 hover:shadow-lg hover:border-primary-200 transition-all duration-300 transform ${rotations[index % rotations.length]} hover:rotate-0`}
-                  >
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {role.title}
-                    </h3>
-                    <p className="text-gray-600 mb-3">{role.description}</p>
-                    <p className="text-sm text-primary-500 font-medium">
-                      Time Commitment: {role.timeCommitment}
-                    </p>
-                  </div>
-                )
-              })}
-            </div>
-            <div className="text-center mt-8">
-              <Link
-                href="/contact?type=volunteer"
-                className="inline-block bg-primary-500 text-white px-10 py-4 rounded-full font-semibold text-lg hover:bg-primary-600 transition-all duration-200 shadow-md hover:shadow-lg transform rotate-2 hover:rotate-0"
-              >
-                Apply to Volunteer
-              </Link>
-            </div>
-          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-4">
+            Get Involved
+          </h1>
+          <p className="text-xl text-gray-600 text-center max-w-2xl mx-auto">
+            Join our community of advocates, volunteers, and supporters
+            working to transform mental health awareness
+          </p>
         </div>
       </section>
 
       {/* Why Get Involved Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
         {/* Flowing divider */}
-        <div className="absolute top-0 left-0 right-0 h-20 overflow-hidden">
-          <svg 
-            className="absolute top-0 left-0 w-full h-full" 
-            viewBox="0 0 1200 80" 
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0,15 Q100,30 200,20 Q300,10 400,25 Q500,40 600,25 Q700,10 800,30 Q900,50 1000,35 Q1100,20 1200,30 L1200,0 L0,0 Z"
-              fill="#e6f9e6"
-            />
-          </svg>
-        </div>
-        
-        <div className="container-custom relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-gray-900 mb-8 text-center">
-              Why Get Involved?
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center bg-primary-50 rounded-xl p-6 border-2 border-primary-100 transform rotate-1 hover:rotate-0 transition-transform duration-300">
-                <Users className="w-12 h-12 text-primary-500 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Build Community
-                </h3>
-                <p className="text-gray-600">
-                  Connect with like-minded individuals who care about mental
-                  health advocacy.
-                </p>
-              </div>
-              <div className="text-center bg-secondary-50 rounded-xl p-6 border-2 border-secondary-100 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
-                <CheckCircle className="w-12 h-12 text-secondary-500 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Make an Impact
-                </h3>
-                <p className="text-gray-600">
-                  Contribute to meaningful change in how mental health is
-                  perceived and addressed.
-                </p>
-              </div>
-              <div className="text-center bg-primary-50 rounded-xl p-6 border-2 border-primary-100 transform rotate-1 hover:rotate-0 transition-transform duration-300">
-                <HandHeart className="w-12 h-12 text-primary-500 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Personal Growth
-                </h3>
-                <p className="text-gray-600">
-                  Develop new skills, gain experience, and grow personally while
-                  helping others.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Partnership Benefits */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary-50 overflow-hidden">
-        {/* Flowing divider */}
         <div className="absolute top-0 left-0 right-0 h-24 overflow-hidden">
           <svg 
             className="absolute top-0 left-0 w-full h-full" 
@@ -359,95 +226,277 @@ export default function AdvocacyPage() {
           >
             <path
               d="M0,60 Q150,10 300,50 Q450,80 600,30 Q750,5 900,55 Q1050,85 1200,40 L1200,0 L0,0 Z"
-              fill="white"
+              fill="#f0f5d0"
             />
           </svg>
         </div>
         
+      </section>
+
+      {/* Volunteer Application Form */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
         <div className="container-custom relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-gray-900 mb-8 text-center">
-              Partnership Benefits
-            </h2>
-            <div className="bg-white rounded-xl p-8 shadow-md border-2 border-primary-100 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
-              <p className="text-lg text-gray-700 mb-6">
-                Organizations that partner with Mental Health Addis benefit
-                from:
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                Volunteer Application
+              </h2>
+              <p className="text-lg text-gray-600">
+                Fill out the form below to apply as a volunteer. We'd love to have you join our team!
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  'Increased community visibility',
-                  'Alignment with social responsibility goals',
-                  'Access to mental health resources for employees/members',
-                  'Opportunities for collaborative events',
-                  'Positive brand association',
-                  'Networking with other community organizations',
-                ].map((benefit) => (
-                  <div
-                    key={benefit}
-                    className="flex items-start space-x-2 text-gray-700"
-                  >
-                    <CheckCircle className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
-                    <span>{benefit}</span>
-                  </div>
-                ))}
+            </div>
+
+            {submitted ? (
+              <div className="bg-green-50 border-2 border-green-500 rounded-xl p-8 text-center shadow-lg transform rotate-1 hover:rotate-0 transition-transform duration-300">
+                <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
+                <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                  Thank You!
+                </h3>
+                <p className="text-gray-700">
+                  Your volunteer application has been submitted. We'll get back to you as soon as possible.
+                </p>
               </div>
+            ) : (
+              <form
+                onSubmit={handleSubmit}
+                className="bg-white rounded-2xl p-8 shadow-lg border-2 border-primary-100 transform -rotate-1 hover:rotate-0 transition-transform duration-300"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-semibold text-gray-700 mb-2"
+                    >
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-semibold text-gray-700 mb-2"
+                    >
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label
+                    htmlFor="availability"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Availability *
+                  </label>
+                  <select
+                    id="availability"
+                    name="availability"
+                    value={formData.availability}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    <option value="">Select availability</option>
+                    <option value="days-per-week">Days per week</option>
+                    <option value="days-per-month">Days per month</option>
+                    <option value="months-per-year">Months per year</option>
+                  </select>
+                </div>
+
+                <div className="mb-6">
+                  <label
+                    htmlFor="activityType"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Types of Activity You Want to Enroll In *
+                  </label>
+                  <select
+                    id="activityType"
+                    name="activityType"
+                    value={formData.activityType}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    <option value="">Select activity type</option>
+                    <option value="regular">Regular volunteering</option>
+                    <option value="event-based">Event-based volunteering</option>
+                    <option value="project-based">Project-based volunteering</option>
+                    <option value="flexible">Flexible schedule</option>
+                  </select>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Area(s) of Interest * (Select all that apply)
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {[
+                      'Event Setup',
+                      'Registration Desk',
+                      'Hospitality/Guest Services',
+                      'Workshop Facilitation (trainings, arts: music, painting, literature, drama)',
+                      'Digital Marketing/Promotion',
+                      'Fundraising',
+                      'Graphic Design',
+                      'Photography',
+                      'Content Development',
+                    ].map((area) => (
+                      <label
+                        key={area}
+                        className="flex items-start space-x-2 cursor-pointer p-2 rounded hover:bg-gray-50"
+                      >
+                        <input
+                          type="checkbox"
+                          value={area}
+                          checked={formData.areasOfInterest.includes(area)}
+                          onChange={handleCheckboxChange}
+                          className="mt-1 w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                        />
+                        <span className="text-gray-700 text-sm">{area}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    Are you willing to travel outside of Addis occasionally? *
+                  </label>
+                  <div className="flex gap-6">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="willingToTravel"
+                        value="yes"
+                        checked={formData.willingToTravel === 'yes'}
+                        onChange={handleChange}
+                        required
+                        className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                      />
+                      <span className="text-gray-700">Yes</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="willingToTravel"
+                        value="no"
+                        checked={formData.willingToTravel === 'no'}
+                        onChange={handleChange}
+                        required
+                        className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                      />
+                      <span className="text-gray-700">No</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Additional Message (Optional)
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    rows={4}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-primary-500 text-white px-10 py-4 rounded-full font-semibold text-lg hover:bg-primary-600 transition-all duration-200 shadow-md hover:shadow-lg transform rotate-2 hover:rotate-0 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send className="w-5 h-5 mr-2" />
+                  {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Volunteer Roles Section */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-secondary-50 overflow-hidden">
+        <div className="container-custom relative z-10">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4 text-center">
+            Volunteer Opportunities
+          </h2>
+          <div className="max-w-4xl mx-auto">
+            <p className="text-lg text-gray-600 mb-12 text-center">
+              We have various volunteer roles available. Find one that matches
+              your interests, skills, and availability.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                'Event Setup',
+                'Registration Desk',
+                'Hospitality/Guest Services',
+                'Workshop Facilitation (trainings, arts: music, painting, literature, drama)',
+                'Digital Marketing/Promotion',
+                'Fundraising',
+                'Graphic Design',
+                'Photography',
+                'Content Development',
+              ].map((area, index) => {
+                const rotations = ['rotate-1', '-rotate-1', 'rotate-0.5', '-rotate-0.5', 'rotate-1', '-rotate-1']
+                return (
+                  <div
+                    key={area}
+                    className={`bg-white p-6 rounded-xl shadow-md border-2 border-gray-100 hover:shadow-lg hover:border-secondary-200 transition-all duration-300 transform ${rotations[index % rotations.length]} hover:rotate-0 flex items-center justify-center min-h-[120px]`}
+                  >
+                    <p className="text-gray-900 font-medium text-center">
+                      {area}
+                    </p>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 text-white overflow-hidden">
-        {/* Flowing divider */}
-        <div className="absolute top-0 left-0 right-0 h-20 overflow-hidden opacity-20">
-          <svg 
-            className="absolute top-0 left-0 w-full h-full" 
-            viewBox="0 0 1200 80" 
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0,50 Q300,20 600,40 T1200,30 L1200,0 L0,0 Z"
-              fill="url(#ctaGradient)"
-            />
-            <defs>
-              <linearGradient id="ctaGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
-                <stop offset="50%" stopColor="#BCD13B" stopOpacity="0.2" />
-                <stop offset="100%" stopColor="#ffffff" stopOpacity="0.3" />
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-        
-        <div className="container-custom relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6">
-              Ready to Make a Difference?
-            </h2>
-            <p className="text-xl mb-8 text-primary-100">
-              Whether you want to volunteer, share your story, partner with us,
-              or support our events, we'd love to hear from you.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/contact"
-                className="inline-block bg-white text-primary-500 px-10 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition-all duration-200 shadow-md hover:shadow-lg transform rotate-2 hover:rotate-0"
-              >
-                Get in Touch
-              </Link>
-              <Link
-                href="/events"
-                className="inline-block bg-transparent border-2 border-white text-white px-10 py-4 rounded-full font-semibold text-lg hover:bg-white/10 transition-all duration-200 transform -rotate-2 hover:rotate-0"
-              >
-                View Upcoming Events
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }

@@ -34,7 +34,7 @@ export default function AboutPage() {
           >
             <path
               d="M0,40 Q150,80 300,50 Q450,10 600,60 Q750,90 900,35 Q1050,5 1200,55 L1200,100 L0,100 Z"
-              fill="#e6f9e6"
+              fill="white"
             />
           </svg>
         </div>
@@ -80,22 +80,6 @@ export default function AboutPage() {
 
       {/* Our Approach Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
-        {/* Flowing divider */}
-        <div className="absolute top-0 left-0 right-0 h-24 overflow-hidden">
-          <svg 
-            className="absolute top-0 left-0 w-full h-full" 
-            viewBox="0 0 1200 100" 
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0,40 Q150,80 300,50 Q450,10 600,60 Q750,90 900,35 Q1050,5 1200,55 L1200,0 L0,0 Z"
-              fill="#e6f9e6"
-            />
-          </svg>
-        </div>
-        
         <div className="container-custom relative z-10">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-gray-900 mb-6 text-center">

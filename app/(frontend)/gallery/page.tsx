@@ -20,6 +20,22 @@ export default function GalleryPage() {
     <div className="min-h-screen bg-white">
       {/* Header Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary-50 overflow-hidden">
+        {/* Flowing divider - Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 overflow-hidden">
+          <svg 
+            className="absolute bottom-0 left-0 w-full h-full" 
+            viewBox="0 0 1200 100" 
+            preserveAspectRatio="none"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0,40 Q150,80 300,50 Q450,10 600,60 Q750,90 900,35 Q1050,5 1200,55 L1200,100 L0,100 Z"
+              fill="white"
+            />
+          </svg>
+        </div>
+        
         <div className="container-custom relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-4">
             Gallery
