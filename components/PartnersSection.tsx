@@ -21,7 +21,7 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
         </div>
 
         {hasPartners ? (
-          <div className="grid grid-cols-5 gap-8 items-center justify-items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-items-center max-w-2xl mx-auto">
             {partners.map((partner) => {
             const logoElement = (
               <div 

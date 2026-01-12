@@ -10,29 +10,12 @@ export interface Partner {
 
 export const partners: Partner[] = [
   {
-    name: 'Company 1',
-    logo: '/partners/placeholder-1.svg',
-    url: 'https://example.com'
+    name: 'Embassy of Ireland',
+    logo: '/embassy_of_ireland_logo.png',
   },
   {
-    name: 'Company 2',
-    logo: '/partners/placeholder-2.svg',
-    url: 'https://example.com'
-  },
-  {
-    name: 'Company 3',
-    logo: '/partners/placeholder-3.svg',
-    url: 'https://example.com'
-  },
-  {
-    name: 'Company 4',
-    logo: '/partners/placeholder-4.svg',
-    url: 'https://example.com'
-  },
-  {
-    name: 'Company 5',
-    logo: '/partners/placeholder-5.svg',
-    url: 'https://example.com'
+    name: 'WaterAid',
+    logo: '/water_aid_logo.png',
   },
 ]
 
