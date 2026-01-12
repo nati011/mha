@@ -13,6 +13,15 @@ import {
   Calendar,
   Sparkles,
   Send,
+  Settings,
+  ClipboardCheck,
+  UserCheck,
+  GraduationCap,
+  Megaphone,
+  DollarSign,
+  Palette,
+  Camera,
+  FileText,
 } from 'lucide-react'
 
 export default function AdvocacyPage() {
@@ -470,24 +479,28 @@ export default function AdvocacyPage() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
-                'Event Setup',
-                'Registration Desk',
-                'Hospitality/Guest Services',
-                'Workshop Facilitation (trainings, arts: music, painting, literature, drama)',
-                'Digital Marketing/Promotion',
-                'Fundraising',
-                'Graphic Design',
-                'Photography',
-                'Content Development',
+                { name: 'Event Setup', icon: Settings },
+                { name: 'Registration Desk', icon: ClipboardCheck },
+                { name: 'Hospitality/Guest Services', icon: UserCheck },
+                { name: 'Workshop Facilitation (trainings, arts: music, painting, literature, drama)', icon: GraduationCap },
+                { name: 'Digital Marketing/Promotion', icon: Megaphone },
+                { name: 'Fundraising', icon: DollarSign },
+                { name: 'Graphic Design', icon: Palette },
+                { name: 'Photography', icon: Camera },
+                { name: 'Content Development', icon: FileText },
               ].map((area, index) => {
                 const rotations = ['rotate-1', '-rotate-1', 'rotate-0.5', '-rotate-0.5', 'rotate-1', '-rotate-1']
+                const IconComponent = area.icon
                 return (
                   <div
-                    key={area}
-                    className={`bg-white p-6 rounded-xl shadow-md border-2 border-gray-100 hover:shadow-lg hover:border-secondary-200 transition-all duration-300 transform ${rotations[index % rotations.length]} hover:rotate-0 flex items-center justify-center min-h-[120px]`}
+                    key={area.name}
+                    className={`bg-white p-6 rounded-xl shadow-md border-2 border-gray-100 hover:shadow-lg hover:border-secondary-200 transition-all duration-300 transform ${rotations[index % rotations.length]} hover:rotate-0 flex flex-col items-center justify-center min-h-[120px]`}
                   >
-                    <p className="text-gray-900 font-medium text-center">
-                      {area}
+                    <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center mb-3">
+                      <IconComponent className="w-6 h-6 text-primary-500" />
+                    </div>
+                    <p className="text-gray-900 font-medium text-center text-sm">
+                      {area.name}
                     </p>
                   </div>
                 )
