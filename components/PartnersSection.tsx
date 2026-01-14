@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useEffect } from 'react'
 import { partners as defaultPartners, type Partner } from '@/data/partners'
 
 interface PartnersSectionProps {
@@ -6,6 +9,11 @@ interface PartnersSectionProps {
 }
 
 export default function PartnersSection({ partners = defaultPartners }: PartnersSectionProps) {
+  // #region agent log
+  useEffect(() => {
+    fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:12',message:'PartnersSection component mounted',data:{partnersCount:partners?.length,defaultPartnersCount:defaultPartners?.length,hasPartners:partners && partners.length > 0,cssLoaded:typeof window !== 'undefined' && !!document.querySelector('style[data-next-hide-fouc]')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+  }, []);
+  // #endregion
   const hasPartners = partners && partners.length > 0
 
   return (
@@ -21,16 +29,37 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
         </div>
 
         {hasPartners ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-items-center max-w-2xl mx-auto">
+          <div className="flex flex-wrap justify-center items-center gap-8 max-w-2xl mx-auto">
             {partners.map((partner) => {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:33',message:'Rendering partner',data:{partnerName:partner.name,logoPath:partner.logo,hasUrl:!!partner.url,imageSrc:partner.logo},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'E'})}).catch(()=>{});
+            // #endregion
             const logoElement = (
               <div 
-                className="relative w-full max-w-[180px] h-24 flex items-center justify-center p-4 bg-white rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all duration-300 transform hover:scale-105 group"
+                className={`relative w-full max-w-[180px] h-24 flex items-center justify-center p-4 rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all duration-300 transform hover:scale-105 group ${
+                  partner.name === 'Embassy of Ireland' ? 'bg-gray-100' : 'bg-white'
+                }`}
               >
                 <img
                   src={partner.logo}
                   alt={`${partner.name} logo`}
-                  className="max-h-16 max-w-[140px] object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
+                  className={`max-h-16 max-w-[140px] object-contain transition-all duration-300 ${
+                    partner.name === 'Embassy of Ireland' 
+                      ? 'opacity-100' 
+                      : 'grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100'
+                  }`}
+                  onError={(e) => {
+                    // #region agent log
+                    const target = e.target as HTMLImageElement;
+                    fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:42',message:'Image load error',data:{partnerName:partner.name,logoPath:partner.logo,imageSrc:target?.src,error:'Image failed to load',naturalWidth:target?.naturalWidth,naturalHeight:target?.naturalHeight},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'E'})}).catch(()=>{});
+                    // #endregion
+                  }}
+                  onLoad={(e) => {
+                    // #region agent log
+                    const target = e.target as HTMLImageElement;
+                    fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:47',message:'Image loaded successfully',data:{partnerName:partner.name,logoPath:partner.logo,imageSrc:target?.src,naturalWidth:target?.naturalWidth,naturalHeight:target?.naturalHeight},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'E'})}).catch(()=>{});
+                    // #endregion
+                  }}
                 />
               </div>
             )
@@ -42,7 +71,7 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
                   href={partner.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block w-full"
+                  className="flex justify-center"
                   aria-label={`Visit ${partner.name} website`}
                 >
                   {logoElement}
@@ -51,7 +80,7 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
             }
 
             return (
-              <div key={partner.name}>
+              <div key={partner.name} className="flex justify-center">
                 {logoElement}
               </div>
             )
@@ -70,5 +99,8 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
       </div>
     </section>
   )
+  // #region agent log
+  // Note: This log won't execute due to return above, but component should render
+  // #endregion
 }
 

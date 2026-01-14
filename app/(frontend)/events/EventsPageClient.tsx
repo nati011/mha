@@ -37,11 +37,10 @@ export default function EventsPageClient({ events: initialEvents }: { events: Ev
       return event.status === filter
     })
     .sort((a, b) => {
-      // For past events, show newest first (descending by date)
-      // For upcoming events, show soonest first (ascending by date)
+      // Sort by date descending (latest/newest first)
       const dateA = new Date(a.date).getTime()
       const dateB = new Date(b.date).getTime()
-      return filter === 'past' ? dateB - dateA : dateA - dateB
+      return dateB - dateA
     })
   
   const upcomingCount = initialEvents.filter((e) => e.status === 'upcoming').length

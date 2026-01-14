@@ -50,7 +50,14 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
     'transform rotate-1 hover:rotate-0',
     'transform -rotate-0.5 hover:rotate-0'
   ]
-  const venueIsUrl = isUrl(event.venue)
+  
+  // Safely check if venue is a valid URL
+  let venueIsUrl = false
+  try {
+    venueIsUrl = !!(event.venue && typeof event.venue === 'string' && isUrl(event.venue))
+  } catch (error) {
+    venueIsUrl = false
+  }
 
   const attendeeCount = event.attendees?.length || 0
   const panelists = event.panelists || []
@@ -103,7 +110,11 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
                     href={event.venue}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      window.open(event.venue, '_blank', 'noopener,noreferrer')
+                    }}
                     className="text-primary-600 hover:text-primary-700 hover:underline font-medium inline-flex items-center gap-1"
                   >
                     <span>View on Maps</span>
