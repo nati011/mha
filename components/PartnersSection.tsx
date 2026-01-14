@@ -36,18 +36,12 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
             // #endregion
             const logoElement = (
               <div 
-                className={`relative w-full max-w-[180px] h-24 flex items-center justify-center p-4 rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all duration-300 transform hover:scale-105 group ${
-                  partner.name === 'Embassy of Ireland' ? 'bg-gray-100' : 'bg-white'
-                }`}
+                className="relative w-full max-w-[180px] h-24 flex items-center justify-center p-4 bg-white rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all duration-300 transform hover:scale-105 group"
               >
                 <img
                   src={partner.logo}
                   alt={`${partner.name} logo`}
-                  className={`max-h-16 max-w-[140px] object-contain transition-all duration-300 ${
-                    partner.name === 'Embassy of Ireland' 
-                      ? 'opacity-100' 
-                      : 'grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100'
-                  }`}
+                  className="max-h-16 max-w-[140px] object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
                   onError={(e) => {
                     // #region agent log
                     const target = e.target as HTMLImageElement;
