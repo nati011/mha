@@ -282,18 +282,24 @@ export default function EventDetailPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {event.panelists.map((panelist) => (
                     <div key={panelist.id} className="text-center">
-                      <h4 className="text-lg font-semibold mb-3">{panelist.name}</h4>
                       <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
                         {panelist.image ? (
                           <img
                             src={panelist.image}
                             alt={panelist.name}
-                            className="w-16 h-16 rounded-full object-cover mx-auto border-2 border-primary-200"
+                            className="w-16 h-16 rounded-full object-cover mx-auto border-2 border-primary-200 mb-3"
                           />
                         ) : (
-                          <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mx-auto border-2 border-primary-200">
+                          <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mx-auto border-2 border-primary-200 mb-3">
                             <User className="w-8 h-8 text-primary-600" />
                           </div>
+                        )}
+                        <h4 className="text-lg font-semibold mb-2">{panelist.name}</h4>
+                        {panelist.role && (
+                          <p className="text-sm font-medium text-primary-600 mb-2">{panelist.role}</p>
+                        )}
+                        {panelist.description && (
+                          <p className="text-sm text-gray-600 leading-relaxed">{panelist.description}</p>
                         )}
                       </div>
                     </div>
