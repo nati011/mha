@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { title, description, date, time, endTime, venue, chapterId, isFree, entranceFee, capacity, category, tags, isRecurring, recurrencePattern, recurrenceEndDate, panelists } = body
+    const { title, description, date, time, endTime, venue, chapterId, isFree, entranceFee, capacity, category, tags, isRecurring, recurrencePattern, recurrenceEndDate, openingNotes, closingNotes, panelists } = body
 
     if (!title || !description || !date || !time || !venue) {
       return NextResponse.json(
@@ -170,6 +170,8 @@ export async function POST(request: NextRequest) {
         isRecurring: isRecurring || false,
         recurrencePattern: recurrencePattern || null,
         recurrenceEndDate: recurrenceEndDate || null,
+        openingNotes: openingNotes || null,
+        closingNotes: closingNotes || null,
         panelists: {
           create: panelistsArray.map((panelist) => ({
             name: panelist.name,

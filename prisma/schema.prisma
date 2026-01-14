@@ -46,6 +46,8 @@ model Event {
   recurrencePattern String?    // daily, weekly, monthly, etc.
   recurrenceEndDate String?    // When recurrence ends
   parentEventId Int?           // For recurring event series
+  openingNotes  String?        // Opening notes for the event
+  closingNotes  String?        // Closing notes for the event
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   attendees     Attendee[]

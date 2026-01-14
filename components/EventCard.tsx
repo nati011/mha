@@ -24,6 +24,8 @@ interface Event {
   attendees?: { id: number }[]
   panelists?: Panelist[]
   status?: string
+  openingNotes?: string | null
+  closingNotes?: string | null
   chapter?: {
     id: number
     name: string
@@ -166,6 +168,24 @@ export default function EventCard({ event, index = 0 }: Readonly<EventCardProps>
                     <span className="text-xs text-gray-500 self-center">+{panelists.length - 3} more</span>
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* Opening and Closing Notes - Only for closed/past events */}
+            {(event.status === 'past' || event.status === 'closed') && (
+              <div className="mb-3 space-y-2">
+                {event.openingNotes && (
+                  <div className="bg-primary-50 border-l-2 border-primary-500 p-2 rounded-r text-xs">
+                    <p className="font-semibold text-gray-900 mb-1">Opening Notes:</p>
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-line line-clamp-2">{event.openingNotes}</p>
+                  </div>
+                )}
+                {event.closingNotes && (
+                  <div className="bg-secondary-50 border-l-2 border-secondary-400 p-2 rounded-r text-xs">
+                    <p className="font-semibold text-gray-900 mb-1">Closing Notes:</p>
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-line line-clamp-2">{event.closingNotes}</p>
+                  </div>
+                )}
               </div>
             )}
             

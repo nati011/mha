@@ -26,6 +26,8 @@ interface Event {
   isFree: boolean
   entranceFee: number | null
   capacity: number | null
+  openingNotes: string | null
+  closingNotes: string | null
   panelists?: Panelist[]
   chapter?: {
     id: number
@@ -92,6 +94,8 @@ export default function EditEventPage() {
         entranceFee: event.entranceFee || '',
         endTime: event.endTime || '',
         chapterId: event.chapterId || null,
+        openingNotes: event.openingNotes || '',
+        closingNotes: event.closingNotes || '',
       })
       setPanelists(event.panelists && event.panelists.length > 0 ? event.panelists : [{ name: '', role: '', description: '', image: null }])
     } catch (err) {
@@ -135,6 +139,8 @@ export default function EditEventPage() {
           chapterId: formData.chapterId || null,
           capacity: formData.capacity ? parseInt(String(formData.capacity)) : null,
           entranceFee: formData.isFree ? null : (formData.entranceFee ? parseFloat(String(formData.entranceFee)) : null),
+          openingNotes: formData.openingNotes || null,
+          closingNotes: formData.closingNotes || null,
           panelists: panelists.filter(p => p.name.trim() !== '' && p.role.trim() !== ''),
         }),
       })
@@ -459,6 +465,45 @@ export default function EditEventPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Opening and Closing Notes */}
+            <div className="pt-6 border-t border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Event Notes</h3>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="openingNotes" className="block text-sm font-medium text-gray-700 mb-2">
+                    Opening Notes (optional)
+                  </label>
+                  <textarea
+                    id="openingNotes"
+                    value={formData.openingNotes || ''}
+                    onChange={(e) => setFormData({ ...formData, openingNotes: e.target.value })}
+                    rows={4}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="Add opening notes or announcements for this event..."
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    These notes will appear at the beginning of the event detail page
+                  </p>
+                </div>
+                <div>
+                  <label htmlFor="closingNotes" className="block text-sm font-medium text-gray-700 mb-2">
+                    Closing Notes (optional)
+                  </label>
+                  <textarea
+                    id="closingNotes"
+                    value={formData.closingNotes || ''}
+                    onChange={(e) => setFormData({ ...formData, closingNotes: e.target.value })}
+                    rows={4}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    placeholder="Add closing notes or follow-up information for this event..."
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    These notes will appear at the end of the event detail page
+                  </p>
+                </div>
               </div>
             </div>
 

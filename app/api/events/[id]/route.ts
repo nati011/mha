@@ -80,7 +80,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { title, description, date, time, endTime, venue, chapterId, isFree, entranceFee, capacity, category, tags, isRecurring, recurrencePattern, recurrenceEndDate, panelists } = body
+    const { title, description, date, time, endTime, venue, chapterId, isFree, entranceFee, capacity, category, tags, isRecurring, recurrencePattern, recurrenceEndDate, openingNotes, closingNotes, panelists } = body
 
     if (!isFree && (!entranceFee || entranceFee <= 0)) {
       return NextResponse.json(
@@ -120,6 +120,8 @@ export async function PUT(
         ...(isRecurring !== undefined && { isRecurring }),
         ...(recurrencePattern !== undefined && { recurrencePattern: recurrencePattern || null }),
         ...(recurrenceEndDate !== undefined && { recurrenceEndDate: recurrenceEndDate || null }),
+        ...(openingNotes !== undefined && { openingNotes: openingNotes || null }),
+        ...(closingNotes !== undefined && { closingNotes: closingNotes || null }),
         panelists: {
           create: panelistsArray.map((panelist) => ({
             name: panelist.name,

@@ -31,6 +31,8 @@ interface Event {
   panelists?: Panelist[]
   category?: string | null
   tags?: string | null
+  openingNotes?: string | null
+  closingNotes?: string | null
   chapter?: {
     id: number
     name: string
@@ -272,6 +274,14 @@ export default function EventDetailPage() {
               <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-line">{event.description}</p>
             </div>
 
+            {/* Opening Notes */}
+            {event.openingNotes && (
+              <div className="mb-6 bg-primary-50 border-l-4 border-primary-500 p-4 rounded-r-lg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Opening Notes</h3>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">{event.openingNotes}</p>
+              </div>
+            )}
+
             {/* Panelists */}
             {event.panelists && event.panelists.length > 0 && (
               <div className="mb-6">
@@ -328,6 +338,14 @@ export default function EventDetailPage() {
                 </div>
               )}
             </div>
+
+            {/* Closing Notes */}
+            {event.closingNotes && (
+              <div className="mt-6 bg-secondary-50 border-l-4 border-secondary-400 p-4 rounded-r-lg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Closing Notes</h3>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">{event.closingNotes}</p>
+              </div>
+            )}
           </div>
         </div>
       </section>

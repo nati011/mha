@@ -21,6 +21,8 @@ interface Event {
     role: string
     image: string | null
   }>
+  openingNotes?: string | null
+  closingNotes?: string | null
   chapter?: {
     id: number
     name: string
