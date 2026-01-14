@@ -260,7 +260,7 @@ export default function EventDetailPage() {
               {/* Chapter Information (if available) */}
               {event.chapter && (
                 <div className="mt-3 flex items-center gap-2 text-sm text-gray-600">
-                  <span className="font-medium">Hosted by:</span>
+                  <span className="font-medium">Chapter:</span>
                   <span className="text-primary-600 font-semibold">
                     {event.chapter.name}
                     {event.chapter.location && ` - ${event.chapter.location}`}
