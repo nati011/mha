@@ -199,8 +199,23 @@ async function getStats() {
 export const dynamic = 'force-dynamic'
 
 export default async function Home() {
+  // #region agent log
+  // Server-side logging - write directly to file
+  const fs = require('fs');
+  const logPath = '/home/kifiya/mha/.cursor/debug.log';
+  try {
+    const logEntry = JSON.stringify({location:'page.tsx:201',message:'Home component rendering start',data:{timestamp:new Date().toISOString()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'}) + '\n';
+    fs.appendFileSync(logPath, logEntry);
+  } catch (e) {}
+  // #endregion
   const upcomingEvents = await getUpcomingEvents()
   const stats = await getStats()
+  // #region agent log
+  try {
+    const logEntry = JSON.stringify({location:'page.tsx:204',message:'Home component data fetched',data:{upcomingEventsCount:upcomingEvents.length,stats},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'}) + '\n';
+    fs.appendFileSync(logPath, logEntry);
+  } catch (e) {}
+  // #endregion
 
   return (
     <div className="min-h-screen bg-white">
@@ -343,6 +358,9 @@ export default async function Home() {
       </section>
 
       {/* Partners Section */}
+      {/* #region agent log */}
+      {/* Log before PartnersSection render */}
+      {/* #endregion */}
       <PartnersSection />
 
       {/* CTA Section - BetterHelp Style */}

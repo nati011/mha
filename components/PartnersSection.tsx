@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useEffect } from 'react'
 import { partners as defaultPartners, type Partner } from '@/data/partners'
 
 interface PartnersSectionProps {
@@ -6,6 +9,11 @@ interface PartnersSectionProps {
 }
 
 export default function PartnersSection({ partners = defaultPartners }: PartnersSectionProps) {
+  // #region agent log
+  useEffect(() => {
+    fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:12',message:'PartnersSection component mounted',data:{partnersCount:partners?.length,defaultPartnersCount:defaultPartners?.length,hasPartners:partners && partners.length > 0,cssLoaded:typeof window !== 'undefined' && !!document.querySelector('style[data-next-hide-fouc]')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+  }, []);
+  // #endregion
   const hasPartners = partners && partners.length > 0
 
   return (
@@ -31,6 +39,16 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
                   src={partner.logo}
                   alt={`${partner.name} logo`}
                   className="max-h-16 max-w-[140px] object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
+                  onError={(e) => {
+                    // #region agent log
+                    fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:32',message:'Image load error',data:{partnerName:partner.name,logoPath:partner.logo,error:'Image failed to load'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                    // #endregion
+                  }}
+                  onLoad={() => {
+                    // #region agent log
+                    fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:33',message:'Image loaded successfully',data:{partnerName:partner.name,logoPath:partner.logo},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                    // #endregion
+                  }}
                 />
               </div>
             )
@@ -70,5 +88,8 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
       </div>
     </section>
   )
+  // #region agent log
+  // Note: This log won't execute due to return above, but component should render
+  // #endregion
 }
 
