@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { Calendar, Clock, MapPin, Users } from 'lucide-react'
 import EventCard from '@/components/EventCard'
-import Link from 'next/link'
 
 interface Event {
   id: number
@@ -238,43 +237,6 @@ export default function EventsPageClient({ events: initialEvents }: { events: Ev
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary-50 overflow-hidden">
-        {/* Flowing divider */}
-        <div className="absolute top-0 left-0 right-0 h-20 overflow-hidden">
-          <svg 
-            className="absolute top-0 left-0 w-full h-full" 
-            viewBox="0 0 1200 80" 
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0,15 Q100,30 200,20 Q300,10 400,25 Q500,40 600,25 Q700,10 800,30 Q900,50 1000,35 Q1100,20 1200,30 L1200,0 L0,0 Z"
-              fill="#ffffff"
-            />
-          </svg>
-        </div>
-        
-        <div className="container-custom relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6 text-gray-900">
-              Want to Host an Event?
-            </h2>
-            <p className="text-xl mb-8 text-gray-700">
-              We're always looking for partners and volunteers to help organize
-              events. Get in touch to learn how you can contribute.
-            </p>
-            <Link
-              href="/contact"
-              className="inline-block bg-primary-500 text-white px-10 py-4 rounded-full font-semibold text-lg hover:bg-primary-600 transition-all duration-200 shadow-md hover:shadow-lg transform rotate-2 hover:rotate-0"
-            >
-              Contact Us
-            </Link>
           </div>
         </div>
       </section>
