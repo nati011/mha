@@ -363,3 +363,19 @@ model Member {
   @@index([createdAt])
   @@index([directoryVisible])
 }
+
+model Announcement {
+  id          Int      @id @default(autoincrement())
+  message     String
+  link        String?  // Optional link URL
+  linkText    String?  // Optional link text
+  isActive    Boolean  @default(true)
+  priority    Int      @default(0) // Higher priority shows first
+  backgroundColor String? // Optional custom background color (hex)
+  textColor   String?    // Optional custom text color (hex)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isActive])
+  @@index([priority])
+}

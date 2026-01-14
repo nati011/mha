@@ -18,7 +18,8 @@ import {
   FileText,
   BookOpen,
   Video,
-  MapPin
+  MapPin,
+  Bell
 } from 'lucide-react'
 import Logo from '@/components/Logo'
 
@@ -124,6 +125,7 @@ export default function AdminLayout({
     { href: '/admin/recordings', label: 'Recordings', icon: Video },
     { href: '/admin/attendance', label: 'Attendance', icon: ClipboardCheck },
     { href: '/admin/campaigns', label: 'Campaigns', icon: MessageSquare },
+    { href: '/admin/announcements', label: 'Announcements', icon: Bell },
     { href: '/admin/blog', label: 'Blog', icon: FileText },
     { href: '/admin/resources', label: 'Resources', icon: BookOpen },
     { href: '/admin/volunteers', label: 'Volunteers', icon: Users },

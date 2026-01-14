@@ -1,5 +1,6 @@
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import AnnouncementBanner from '@/components/AnnouncementBanner'
 
 export default function FrontendLayout({
   children,
@@ -22,6 +23,7 @@ export default function FrontendLayout({
   return (
     <>
       <Header />
+      <AnnouncementBanner />
       <main>{children}</main>
       <Footer />
     </>
