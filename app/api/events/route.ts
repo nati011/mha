@@ -32,6 +32,13 @@ export async function GET(request: NextRequest) {
           orderBy: { createdAt: 'asc' },
         },
         recordings: {
+          select: {
+            id: true,
+            title: true,
+            url: true,
+            thumbnail: true,
+            duration: true,
+          },
           orderBy: { createdAt: 'asc' },
         },
         feedback: {
@@ -102,7 +109,31 @@ export async function GET(request: NextRequest) {
       }
       
       return {
-        ...event,
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        date: event.date,
+        time: event.time,
+        endTime: event.endTime,
+        venue: event.venue,
+        chapterId: event.chapterId,
+        isFree: event.isFree,
+        entranceFee: event.entranceFee,
+        capacity: event.capacity,
+        category: event.category,
+        tags: event.tags,
+        isRecurring: event.isRecurring,
+        recurrencePattern: event.recurrencePattern,
+        recurrenceEndDate: event.recurrenceEndDate,
+        openingNotes: (event as any).openingNotes || null,
+        closingNotes: (event as any).closingNotes || null,
+        createdAt: event.createdAt.toISOString(),
+        updatedAt: event.updatedAt.toISOString(),
+        attendees: event.attendees,
+        panelists: event.panelists,
+        recordings: event.recordings,
+        feedback: event.feedback,
+        chapter: event.chapter,
         status,
       }
     })
@@ -163,7 +194,7 @@ export async function POST(request: NextRequest) {
         venue,
         chapterId: chapterId ? Number.parseInt(chapterId) : null,
         isFree: isFree ?? true,
-        entranceFee: isFree ? null : (entranceFee ? parseFloat(entranceFee) : null),
+        entranceFee: isFree ? null : (entranceFee ? Number.parseFloat(entranceFee) : null),
         capacity: capacity ? Number.parseInt(capacity) : null,
         category: category || null,
         tags: tags || null,
@@ -180,7 +211,7 @@ export async function POST(request: NextRequest) {
             image: panelist.image || null,
           })),
         },
-      },
+      } as any,
       include: {
         panelists: true,
         chapter: {
