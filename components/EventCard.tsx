@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Clock, MapPin, ArrowRight, Users } from 'lucide-react'
 import { isUrl } from '@/lib/utils'
@@ -30,11 +32,11 @@ interface Event {
 }
 
 interface EventCardProps {
-  event: Event
-  index?: number
+  readonly event: Event
+  readonly index?: number
 }
 
-export default function EventCard({ event, index = 0 }: EventCardProps) {
+export default function EventCard({ event, index = 0 }: Readonly<EventCardProps>) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return {
