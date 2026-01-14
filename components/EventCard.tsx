@@ -54,7 +54,7 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
   // Safely check if venue is a valid URL
   let venueIsUrl = false
   try {
-    venueIsUrl = event.venue && typeof event.venue === 'string' && isUrl(event.venue)
+    venueIsUrl = !!(event.venue && typeof event.venue === 'string' && isUrl(event.venue))
   } catch (error) {
     venueIsUrl = false
   }
