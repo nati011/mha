@@ -213,12 +213,12 @@ export default function AdvocacyPage() {
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary-50 overflow-hidden">
         <div className="container-custom relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-4">
-            Get Involved
-          </h1>
+              Get Involved
+            </h1>
           <p className="text-xl text-gray-600 text-center max-w-2xl mx-auto">
-            Join our community of advocates, volunteers, and supporters
-            working to transform mental health awareness
-          </p>
+              Join our community of advocates, volunteers, and supporters
+              working to transform mental health awareness
+            </p>
         </div>
       </section>
 
@@ -249,7 +249,7 @@ export default function AdvocacyPage() {
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
                 Volunteer Application
-              </h2>
+          </h2>
               <p className="text-lg text-gray-600">
                 Fill out the form below to apply as a volunteer. We'd love to have you join our team!
               </p>
@@ -469,9 +469,9 @@ export default function AdvocacyPage() {
       {/* Volunteer Roles Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-secondary-50 overflow-hidden">
         <div className="container-custom relative z-10">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4 text-center">
-            Volunteer Opportunities
-          </h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4 text-center">
+              Volunteer Opportunities
+            </h2>
           <div className="max-w-4xl mx-auto">
             <p className="text-lg text-gray-600 mb-12 text-center">
               We have various volunteer roles available. Find one that matches
