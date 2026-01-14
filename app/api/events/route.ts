@@ -14,7 +14,7 @@ interface PanelistInput {
 export async function GET(request: NextRequest) {
   try {
     const events = await prisma.event.findMany({
-      orderBy: { date: 'asc' },
+      orderBy: { date: 'desc' },
       include: {
         attendees: {
           select: {

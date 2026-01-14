@@ -15,7 +15,7 @@ export default function AboutPage() {
     {
       year: '2026',
       title: 'Expanding Impact',
-      description: 'Continuing to grow our reach and deepen our impact.',
+      description: 'Digitizing & Continuing to grow our reach to deepen our impact.',
     },
   ]
 

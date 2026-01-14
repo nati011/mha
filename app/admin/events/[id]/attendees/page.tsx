@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Download, Mail, Phone, CheckCircle2, Clock, Plus, Edit, Trash2, X, Search, QrCode } from 'lucide-react'
+import { ArrowLeft, Download, Mail, Phone, CheckCircle2, Clock, Plus, Edit, Trash2, X, Search, QrCode, Upload } from 'lucide-react'
 import QRScanner from '@/components/QRScanner'
+import * as XLSX from 'xlsx'
 
 interface Attendee {
   id: number
@@ -40,6 +41,7 @@ export default function EventAttendeesPage() {
   const [editingAttendee, setEditingAttendee] = useState<Attendee | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [showQRScanner, setShowQRScanner] = useState(false)
+  const [importing, setImporting] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -265,6 +267,83 @@ export default function EventAttendeesPage() {
     }
   }
 
+  const handleExcelImport = async (file: File) => {
+    setImporting(true)
+    setError('')
+
+    try {
+      const arrayBuffer = await file.arrayBuffer()
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' })
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
+      const data = XLSX.utils.sheet_to_json(firstSheet) as any[]
+
+      if (data.length === 0) {
+        throw new Error('Excel file is empty')
+      }
+
+      // Validate and map Excel columns to attendee fields
+      // Expected columns: Name, Email, Phone, Occupation (optional), Emergency Contact (optional), Age Range (optional), How Heard About (optional)
+      const attendeesToImport = data.map((row, index) => {
+        const name = row['Name'] || row['name'] || row['NAME']
+        const email = row['Email'] || row['email'] || row['EMAIL']
+        const phone = row['Phone'] || row['phone'] || row['PHONE'] || row['Phone Number'] || row['phone number']
+
+        if (!name || !email || !phone) {
+          throw new Error(`Row ${index + 2}: Missing required fields (Name, Email, Phone)`)
+        }
+
+        return {
+          name: String(name).trim(),
+          email: String(email).trim().toLowerCase(),
+          phone: String(phone).trim(),
+          occupation: row['Occupation'] || row['occupation'] || null,
+          emergencyContact: row['Emergency Contact'] || row['emergency contact'] || row['EmergencyContact'] || null,
+          ageRange: row['Age Range'] || row['age range'] || row['AgeRange'] || row['Age'] || null,
+          howHeardAbout: row['How Heard About'] || row['how heard about'] || row['HowHeardAbout'] || null,
+        }
+      })
+
+      // Send to API for bulk import
+      const response = await fetch(`/api/events/${eventId}/attendees/import`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ attendees: attendeesToImport }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to import attendees')
+      }
+
+      const result = await response.json()
+      
+      // Refresh attendees list
+      await fetchData()
+      
+      const skippedMsg = result.skipped > 0 ? `${result.skipped} duplicates skipped.` : ''
+      alert(`Successfully imported ${result.created} attendees. ${skippedMsg}`)
+    } catch (err: any) {
+      setError(err.message || 'Failed to import attendees from Excel')
+      console.error(err)
+    } finally {
+      setImporting(false)
+    }
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (!file.name.match(/\.(xlsx|xls)$/i)) {
+        setError('Please select a valid Excel file (.xlsx or .xls)')
+        return
+      }
+      handleExcelImport(file)
+    }
+  }
+
   const handleQRScan = async (qrData: string) => {
     try {
       const response = await fetch('/api/admin/attendees/scan', {
@@ -419,6 +498,17 @@ export default function EventAttendeesPage() {
                 </button>
               </>
             )}
+            <label className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition-colors cursor-pointer">
+              <Upload className="w-5 h-5" />
+              {importing ? 'Importing...' : 'Import Excel'}
+              <input
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={handleFileChange}
+                disabled={importing}
+                className="hidden"
+              />
+            </label>
             <button
               onClick={handleOpenAddModal}
               className="inline-flex items-center gap-2 bg-primary-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-600 transition-colors"
