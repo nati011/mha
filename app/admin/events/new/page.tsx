@@ -89,6 +89,32 @@ export default function NewEventPage() {
     setLoading(true)
 
     try {
+      // Validate panelists before submission
+      const validPanelists = panelists.filter(p => 
+        p.name.trim() !== '' && 
+        p.role.trim() !== '' && 
+        p.description.trim() !== ''
+      )
+      if (validPanelists.length === 0) {
+        setError('At least one panelist with name, role, and description is required')
+        setLoading(false)
+        return
+      }
+
+      // Validate required fields
+      if (!formData.title || !formData.description || !formData.date || !formData.time || !formData.venue) {
+        setError('Please fill in all required fields')
+        setLoading(false)
+        return
+      }
+
+      // Validate entrance fee for paid events
+      if (!formData.isFree && (!formData.entranceFee || parseFloat(formData.entranceFee) <= 0)) {
+        setError('Entrance fee is required for paid events')
+        setLoading(false)
+        return
+      }
+
       const response = await fetch('/api/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -104,7 +130,7 @@ export default function NewEventPage() {
           isRecurring: formData.isRecurring,
           recurrencePattern: formData.recurrencePattern || null,
           recurrenceEndDate: formData.recurrenceEndDate || null,
-          panelists: panelists.filter(p => p.name.trim() !== '' && p.role.trim() !== ''),
+          panelists: validPanelists,
         }),
       })
 

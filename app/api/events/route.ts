@@ -146,9 +146,9 @@ export async function POST(request: NextRequest) {
     }
 
     const panelistsArray = panelists as PanelistInput[]
-    if (!panelistsArray || panelistsArray.length === 0 || !panelistsArray.some((p) => p.name && p.role)) {
+    if (!panelistsArray || panelistsArray.length === 0 || !panelistsArray.some((p) => p.name && p.role && p.description)) {
       return NextResponse.json(
-        { error: 'At least one panelist with name and role is required' },
+        { error: 'At least one panelist with name, role, and description is required' },
         { status: 400 }
       )
     }
@@ -192,10 +192,28 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(event, { status: 201 })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating event:', error)
+    
+    // Return more specific error messages
+    if (error.code === 'P2002') {
+      return NextResponse.json(
+        { error: 'A duplicate entry exists. Please check your input.' },
+        { status: 400 }
+      )
+    }
+    
+    if (error.code === 'P2003') {
+      return NextResponse.json(
+        { error: 'Invalid reference. Please check chapter ID or other references.' },
+        { status: 400 }
+      )
+    }
+    
+    // Return the actual error message if available
+    const errorMessage = error.message || 'Failed to create event'
     return NextResponse.json(
-      { error: 'Failed to create event' },
+      { error: errorMessage },
       { status: 500 }
     )
   }

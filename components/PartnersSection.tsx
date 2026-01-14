@@ -21,7 +21,7 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
         </div>
 
         {hasPartners ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-items-center max-w-2xl mx-auto">
+          <div className="flex flex-wrap justify-center items-center gap-8 max-w-2xl mx-auto">
             {partners.map((partner) => {
             const logoElement = (
               <div 
@@ -42,7 +42,7 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
                   href={partner.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block w-full"
+                  className="flex justify-center"
                   aria-label={`Visit ${partner.name} website`}
                 >
                   {logoElement}
@@ -51,7 +51,7 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
             }
 
             return (
-              <div key={partner.name}>
+              <div key={partner.name} className="flex justify-center">
                 {logoElement}
               </div>
             )
