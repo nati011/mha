@@ -31,22 +31,33 @@ export default function PartnersSection({ partners = defaultPartners }: Partners
         {hasPartners ? (
           <div className="flex flex-wrap justify-center items-center gap-8 max-w-2xl mx-auto">
             {partners.map((partner) => {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:33',message:'Rendering partner',data:{partnerName:partner.name,logoPath:partner.logo,hasUrl:!!partner.url,imageSrc:partner.logo},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'E'})}).catch(()=>{});
+            // #endregion
             const logoElement = (
               <div 
-                className="relative w-full max-w-[180px] h-24 flex items-center justify-center p-4 bg-white rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all duration-300 transform hover:scale-105 group"
+                className={`relative w-full max-w-[180px] h-24 flex items-center justify-center p-4 rounded-lg border border-gray-200 hover:border-primary-300 hover:shadow-md transition-all duration-300 transform hover:scale-105 group ${
+                  partner.name === 'Embassy of Ireland' ? 'bg-gray-100' : 'bg-white'
+                }`}
               >
                 <img
                   src={partner.logo}
                   alt={`${partner.name} logo`}
-                  className="max-h-16 max-w-[140px] object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300"
+                  className={`max-h-16 max-w-[140px] object-contain transition-all duration-300 ${
+                    partner.name === 'Embassy of Ireland' 
+                      ? 'opacity-100' 
+                      : 'grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100'
+                  }`}
                   onError={(e) => {
                     // #region agent log
-                    fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:32',message:'Image load error',data:{partnerName:partner.name,logoPath:partner.logo,error:'Image failed to load'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                    const target = e.target as HTMLImageElement;
+                    fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:42',message:'Image load error',data:{partnerName:partner.name,logoPath:partner.logo,imageSrc:target?.src,error:'Image failed to load',naturalWidth:target?.naturalWidth,naturalHeight:target?.naturalHeight},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'E'})}).catch(()=>{});
                     // #endregion
                   }}
-                  onLoad={() => {
+                  onLoad={(e) => {
                     // #region agent log
-                    fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:33',message:'Image loaded successfully',data:{partnerName:partner.name,logoPath:partner.logo},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                    const target = e.target as HTMLImageElement;
+                    fetch('http://127.0.0.1:7242/ingest/c4a6ed62-2cb3-4f89-91a5-a32f5e88e56b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'PartnersSection.tsx:47',message:'Image loaded successfully',data:{partnerName:partner.name,logoPath:partner.logo,imageSrc:target?.src,naturalWidth:target?.naturalWidth,naturalHeight:target?.naturalHeight},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'E'})}).catch(()=>{});
                     // #endregion
                   }}
                 />
