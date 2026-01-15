@@ -178,7 +178,7 @@ export default function EventDetailPage() {
     if (!attendeeId) return
     
     try {
-      const response = await fetch(`/api/admin/attendees/${attendeeId}`, {
+      const response = await fetch(`/api/attendees/${attendeeId}/signature`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ signature: sig }),
@@ -187,6 +187,9 @@ export default function EventDetailPage() {
       if (response.ok) {
         setSignature(sig)
         setShowSignature(false)
+      } else {
+        const data = await response.json()
+        console.error('Failed to save signature:', data.error || 'Unknown error')
       }
     } catch (err) {
       console.error('Failed to save signature:', err)
