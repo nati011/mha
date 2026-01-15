@@ -80,17 +80,36 @@ export async function POST(
       }
     }
 
+    // Normalize email and phone for comparison
+    const normalizedEmail = email.toLowerCase().trim()
+    const normalizedPhone = phone.trim()
+
     // Check if email already registered for this event
-    const existingAttendee = await prisma.attendee.findFirst({
+    const existingAttendeeByEmail = await prisma.attendee.findFirst({
       where: {
         eventId: Number.parseInt(params.id),
-        email,
+        email: normalizedEmail,
       },
     })
 
-    if (existingAttendee) {
+    if (existingAttendeeByEmail) {
       return NextResponse.json(
-        { error: 'You are already registered for this event' },
+        { error: 'This email is already registered for this event' },
+        { status: 400 }
+      )
+    }
+
+    // Check if phone number already registered for this event
+    const existingAttendeeByPhone = await prisma.attendee.findFirst({
+      where: {
+        eventId: Number.parseInt(params.id),
+        phone: normalizedPhone,
+      },
+    })
+
+    if (existingAttendeeByPhone) {
+      return NextResponse.json(
+        { error: 'This phone number is already registered for this event' },
         { status: 400 }
       )
     }
@@ -98,13 +117,13 @@ export async function POST(
     const attendee = await prisma.attendee.create({
       data: {
         eventId: Number.parseInt(params.id),
-        name,
-        email,
-        phone,
-        occupation: occupation || null,
-        emergencyContact: emergencyContact || null,
-        ageRange: ageRange || null,
-        howHeardAbout: howHeardAbout || null,
+        name: name.trim(),
+        email: normalizedEmail,
+        phone: normalizedPhone,
+        occupation: occupation?.trim() || null,
+        emergencyContact: emergencyContact?.trim() || null,
+        ageRange: ageRange?.trim() || null,
+        howHeardAbout: howHeardAbout?.trim() || null,
       },
     })
 

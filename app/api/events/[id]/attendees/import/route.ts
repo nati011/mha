@@ -64,11 +64,18 @@ export async function POST(
         break
       }
 
-      // Check if attendee already exists for this event
+      // Normalize email and phone for comparison
+      const normalizedEmail = email.toLowerCase().trim()
+      const normalizedPhone = phone.trim()
+
+      // Check if attendee already exists for this event (by email or phone)
       const existingAttendee = await prisma.attendee.findFirst({
         where: {
           eventId,
-          email: email.toLowerCase().trim(),
+          OR: [
+            { email: normalizedEmail },
+            { phone: normalizedPhone },
+          ],
         },
       })
 
@@ -82,8 +89,8 @@ export async function POST(
         data: {
           eventId,
           name: name.trim(),
-          email: email.toLowerCase().trim(),
-          phone: phone.trim(),
+          email: normalizedEmail,
+          phone: normalizedPhone,
           occupation: occupation?.trim() || null,
           emergencyContact: emergencyContact?.trim() || null,
           ageRange: ageRange?.trim() || null,
