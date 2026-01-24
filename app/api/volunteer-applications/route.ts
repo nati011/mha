@@ -8,6 +8,7 @@ export async function POST(request: NextRequest) {
       name,
       email,
       phone,
+      profilePicture,
       availability,
       activityType,
       areasOfInterest,
@@ -62,6 +63,7 @@ export async function POST(request: NextRequest) {
         lastName,
         email,
         phone: phone || null,
+        profilePicture: profilePicture || null,
         interests: areasOfInterest.join(', '), // Store areas of interest
         availability: availability, // Store availability type
         skills: activityType, // Store activity type

@@ -29,6 +29,7 @@ export default function AdvocacyPage() {
     name: '',
     email: '',
     phone: '',
+    profilePicture: '',
     availability: '',
     activityType: '',
     areasOfInterest: [] as string[],
@@ -70,6 +71,7 @@ export default function AdvocacyPage() {
         name: '',
         email: '',
         phone: '',
+        profilePicture: '',
         availability: '',
         activityType: '',
         areasOfInterest: [],
@@ -93,6 +95,23 @@ export default function AdvocacyPage() {
       ...formData,
       [name]: value,
     })
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) {
+      setFormData({ ...formData, profilePicture: '' })
+      return
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Please upload an image smaller than 2MB.')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      setFormData({ ...formData, profilePicture: reader.result as string })
+    }
+    reader.readAsDataURL(file)
   }
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -290,6 +309,29 @@ export default function AdvocacyPage() {
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
+                </div>
+
+                <div className="mb-6">
+                  <label
+                    htmlFor="profilePicture"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Upload a Picture (Optional)
+                  </label>
+                  <input
+                    type="file"
+                    id="profilePicture"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+                  />
+                  {formData.profilePicture && (
+                    <img
+                      src={formData.profilePicture}
+                      alt="Preview"
+                      className="mt-4 h-32 w-32 rounded-lg object-cover border border-gray-200"
+                    />
+                  )}
                 </div>
 
                 <div className="mb-6">

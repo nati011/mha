@@ -18,23 +18,73 @@ export default function AboutPage() {
       description: 'Digitizing & Continuing to grow our reach to deepen our impact.',
     },
   ]
-  const volunteerHighlights = [
+  const volunteers = [
     {
-      title: 'Community Outreach',
-      description: 'Help us connect with communities and expand mental health awareness.',
-    },
-    {
-      title: 'Event Support',
-      description: 'Assist with organizing and hosting talks, workshops, and community gatherings.',
-    },
-    {
-      title: 'Content & Storytelling',
-      description: 'Share stories, create resources, and amplify mental health conversations.',
+      name: 'Hasset Chenu Habte',
+      role: 'Founder & CEO',
+      about: 'Leads Mental Health Addis with a focus on community-driven mental health support.',
+      image: '/about/hasset_chenu_headshot.jpeg',
     },
   ]
+  const isSingleVolunteer = volunteers.length === 1
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Volunteers Section */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="container-custom relative z-10">
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              About Us
+            </h2>
+            <p className="text-lg text-gray-600">
+              Meet some of the people who make our programs, events, and outreach possible.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto justify-items-center">
+            {volunteers.map((volunteer, index) => (
+              <div
+                key={volunteer.name}
+                className={`bg-white rounded-xl p-6 shadow-sm border-2 border-gray-100 hover:shadow-md hover:border-primary-200 transition-all transform w-full max-w-sm ${
+                  index % 2 === 0 ? '-rotate-1' : 'rotate-1'
+                } ${isSingleVolunteer ? 'col-span-full' : ''} hover:rotate-0`}
+              >
+                {volunteer.image ? (
+                  <img
+                    src={volunteer.image}
+                    alt={volunteer.name}
+                    className="h-24 w-24 rounded-full object-cover border border-gray-200 mb-4 mx-auto"
+                  />
+                ) : (
+                  <div className="h-24 w-24 rounded-full bg-primary-100 text-primary-700 font-semibold flex items-center justify-center mx-auto mb-4">
+                    {volunteer.name.split(' ').map((part) => part[0]).join('').slice(0, 2)}
+                  </div>
+                )}
+                <h3 className="text-xl font-semibold text-gray-900 mb-1 text-center">
+                  {volunteer.name}
+                </h3>
+                <p className="text-sm font-medium text-primary-700 mb-3 text-center">
+                  {volunteer.role}
+                </p>
+                <p className="text-gray-600 leading-relaxed text-center">
+                  {volunteer.about}
+                </p>
+                <div className="mt-4 h-px w-16 bg-primary-200 mx-auto" />
+              </div>
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <Link
+              href="/advocacy"
+              className="inline-flex items-center gap-2 bg-primary-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-600 transition-colors"
+            >
+              Become a Volunteer
+            </Link>
+          </div>
+        </div>
+      </section>
+      <div className="h-px w-full bg-gray-200" />
+
       {/* Our Journey Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="container-custom relative z-10">
@@ -119,46 +169,6 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Volunteers Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary-50 overflow-hidden">
-        <div className="container-custom relative z-10">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Volunteers
-            </h2>
-            <p className="text-lg text-gray-600">
-              Our volunteers power our programs, events, and outreach. Join the team
-              and help us make mental health support more accessible.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {volunteerHighlights.map((item, index) => (
-              <div
-                key={item.title}
-                className={`bg-white rounded-xl p-6 shadow-sm border-2 border-gray-100 hover:shadow-md hover:border-primary-200 transition-all transform ${
-                  index % 2 === 0 ? '-rotate-1' : 'rotate-1'
-                } hover:rotate-0`}
-              >
-                <h3 className="text-2xl font-semibold text-gray-900 mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-10 flex justify-center">
-            <Link
-              href="/advocacy"
-              className="inline-flex items-center gap-2 bg-primary-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-600 transition-colors"
-            >
-              Become a Volunteer
-            </Link>
           </div>
         </div>
       </section>
