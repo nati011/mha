@@ -1,6 +1,113 @@
 import Link from 'next/link'
+import { prisma } from '@/lib/db'
 
-export default function AboutPage() {
+interface VolunteerCard {
+  name: string
+  role: string
+  about: string
+  image?: string | null
+}
+
+// Force dynamic rendering to ensure data is fetched at runtime
+export const dynamic = 'force-dynamic'
+
+async function getPublicMembers(excludedNames: string[]) {
+  try {
+    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.trim() === '') {
+      console.warn('[getPublicMembers] DATABASE_URL not set, returning empty array')
+      return []
+    }
+
+    const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build' ||
+      process.env.NEXT_PHASE === 'phase-development-build' ||
+      process.env.NEXT_PHASE === 'phase-export'
+
+    if (isBuildTime) {
+      console.warn('[getPublicMembers] Build time detected, returning empty array')
+      return []
+    }
+
+    try {
+      if (!prisma || !prisma.member) {
+        console.error('[getPublicMembers] Prisma client not available')
+        return []
+      }
+    } catch (prismaError) {
+      const errorMsg = prismaError instanceof Error ? prismaError.message : String(prismaError)
+      if (errorMsg.includes('DATABASE_URL is not set') || errorMsg.includes('cannot be used during build')) {
+        console.warn('[getPublicMembers] Prisma client not available:', errorMsg)
+        return []
+      }
+      throw prismaError
+    }
+
+    const members = await prisma.member.findMany({
+      where: {
+        status: 'active',
+      },
+      select: {
+        firstName: true,
+        lastName: true,
+        profilePicture: true,
+        bio: true,
+        skills: true,
+        interests: true,
+        occupation: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+
+    const excluded = new Set(excludedNames.map((name) => name.trim().toLowerCase()))
+
+    return members.reduce<VolunteerCard[]>((acc, member) => {
+      const name = `${member.firstName} ${member.lastName}`.trim()
+      if (!name) {
+        return acc
+      }
+
+      const normalizedName = name.toLowerCase()
+      if (excluded.has(normalizedName)) {
+        return acc
+      }
+
+      const role = member.skills?.split(',')[0]?.trim()
+        || member.occupation?.trim()
+        || 'Volunteer'
+
+      const about = member.bio?.trim()
+        || member.skills?.trim()
+        || member.interests?.trim()
+        || 'Member of Mental Health Addis.'
+
+      acc.push({
+        name,
+        role,
+        about,
+        image: member.profilePicture,
+      })
+
+      return acc
+    }, [])
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error)
+    const errorCode = (error as any)?.code
+
+    if (errorMsg.includes('DATABASE_URL is not set') ||
+      errorMsg.includes('cannot be used during build') ||
+      errorMsg.includes('does not exist') ||
+      errorCode === 'P2021') {
+      console.warn('[getPublicMembers] Database not available:', errorMsg)
+      return []
+    }
+
+    console.error('[getPublicMembers] Error fetching members:', error)
+    console.error('[getPublicMembers] Error details:', errorMsg)
+    console.error('[getPublicMembers] Error code:', errorCode)
+    return []
+  }
+}
+
+export default async function AboutPage() {
   const milestones = [
     {
       year: '2023',
@@ -26,7 +133,37 @@ export default function AboutPage() {
       image: '/about/hasset_chenu_headshot.jpeg',
     },
   ]
+  const otherVolunteers = await getPublicMembers(volunteers.map((volunteer) => volunteer.name))
   const isSingleVolunteer = volunteers.length === 1
+  const isSingleOtherVolunteer = otherVolunteers.length === 1
+
+  const renderVolunteerCard = (volunteer: VolunteerCard, index: number, isSingle: boolean) => (
+    <div
+      key={volunteer.name}
+      className={`bg-white rounded-xl p-4 shadow-sm border-2 border-gray-100 hover:shadow-md hover:border-primary-200 transition-all transform w-full max-w-xs ${
+        index % 2 === 0 ? '-rotate-1' : 'rotate-1'
+      } ${isSingle ? 'col-span-full' : ''} hover:rotate-0`}
+    >
+      {volunteer.image ? (
+        <img
+          src={volunteer.image}
+          alt={volunteer.name}
+          className="h-20 w-20 rounded-full object-cover border border-gray-200 mb-3 mx-auto"
+        />
+      ) : (
+        <div className="h-20 w-20 rounded-full bg-primary-100 text-primary-700 font-semibold flex items-center justify-center mx-auto mb-3">
+          {volunteer.name.split(' ').map((part) => part[0]).join('').slice(0, 2)}
+        </div>
+      )}
+      <h3 className="text-lg font-semibold text-gray-900 mb-1 text-center">
+        {volunteer.name}
+      </h3>
+      <p className="text-xs font-medium text-primary-700 mb-2 text-center">
+        {volunteer.role}
+      </p>
+      <div className="mt-3 h-px w-12 bg-primary-200 mx-auto" />
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-white">
@@ -38,41 +175,17 @@ export default function AboutPage() {
               About Us
             </h2>
             <p className="text-lg text-gray-600">
-              Meet some of the people who make our programs, events, and outreach possible.
+              Meet the people behind Mental Health Addis
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto justify-items-center">
-            {volunteers.map((volunteer, index) => (
-              <div
-                key={volunteer.name}
-                className={`bg-white rounded-xl p-6 shadow-sm border-2 border-gray-100 hover:shadow-md hover:border-primary-200 transition-all transform w-full max-w-sm ${
-                  index % 2 === 0 ? '-rotate-1' : 'rotate-1'
-                } ${isSingleVolunteer ? 'col-span-full' : ''} hover:rotate-0`}
-              >
-                {volunteer.image ? (
-                  <img
-                    src={volunteer.image}
-                    alt={volunteer.name}
-                    className="h-24 w-24 rounded-full object-cover border border-gray-200 mb-4 mx-auto"
-                  />
-                ) : (
-                  <div className="h-24 w-24 rounded-full bg-primary-100 text-primary-700 font-semibold flex items-center justify-center mx-auto mb-4">
-                    {volunteer.name.split(' ').map((part) => part[0]).join('').slice(0, 2)}
-                  </div>
-                )}
-                <h3 className="text-xl font-semibold text-gray-900 mb-1 text-center">
-                  {volunteer.name}
-                </h3>
-                <p className="text-sm font-medium text-primary-700 mb-3 text-center">
-                  {volunteer.role}
-                </p>
-                <p className="text-gray-600 leading-relaxed text-center">
-                  {volunteer.about}
-                </p>
-                <div className="mt-4 h-px w-16 bg-primary-200 mx-auto" />
-              </div>
-            ))}
+            {volunteers.map((volunteer, index) => renderVolunteerCard(volunteer, index, isSingleVolunteer))}
           </div>
+          {otherVolunteers.length > 0 && (
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto justify-items-center">
+              {otherVolunteers.map((volunteer, index) => renderVolunteerCard(volunteer, index, isSingleOtherVolunteer))}
+            </div>
+          )}
           <div className="mt-10 flex justify-center">
             <Link
               href="/advocacy"

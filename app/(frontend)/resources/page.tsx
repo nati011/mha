@@ -158,9 +158,7 @@ export default function ResourcesPage() {
                       <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2">
                         {post.title}
                       </h3>
-                      {post.excerpt && (
-                        <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt}</p>
-                      )}
+                      <p className="text-gray-600 mb-4 line-clamp-3">{post.slug}</p>
                       {post.clapCount && post.clapCount > 0 && (
                         <div className="text-sm text-gray-500 mb-4">
                           👏 {post.clapCount}
@@ -200,7 +198,7 @@ export default function ResourcesPage() {
           )}
           <div className="mt-10 flex flex-col items-center gap-3">
             <p className="text-sm text-gray-600">
-              Want to share your story? Register to create a blog post.
+              Want to share your story?
             </p>
             <Link
               href="/resources/new"
