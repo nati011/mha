@@ -17,8 +17,6 @@ export default function MembershipPage() {
     education: '',
     interests: '',
     motivation: '',
-    experience: '',
-    availability: '',
     skills: '',
   })
   const [loading, setLoading] = useState(false)
@@ -57,8 +55,6 @@ export default function MembershipPage() {
         education: '',
         interests: '',
         motivation: '',
-        experience: '',
-        availability: '',
         skills: '',
       })
     } catch (err: any) {
@@ -310,30 +306,7 @@ export default function MembershipPage() {
                       placeholder="Tell us why you want to become a member..."
                     />
                   </div>
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Relevant Experience
-                    </label>
-                    <textarea
-                      value={formData.experience}
-                      onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                      rows={4}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="Any relevant experience in mental health, community work, or related fields?"
-                    />
-                  </div>
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Availability
-                    </label>
-                    <textarea
-                      value={formData.availability}
-                      onChange={(e) => setFormData({ ...formData, availability: e.target.value })}
-                      rows={2}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="When are you available to contribute? (e.g., weekends, evenings, specific days)"
-                    />
-                  </div>
+                  
                 </div>
 
                 {/* Submit Button */}

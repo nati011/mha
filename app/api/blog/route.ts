@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { requireAuth } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,6 +31,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth(request)
+    
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
     const body = await request.json()
     const {
       title,
@@ -60,6 +69,31 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const shouldPublish = session.role !== 'blogger' && Boolean(published)
+    let contactPreference: string | null = null
+
+    if (session.role === 'blogger') {
+      try {
+        const rows = await prisma.$queryRaw<{ contactPreference: string | null }[]>`
+          SELECT "contactPreference"
+          FROM "Admin"
+          WHERE "username" = ${session.username}
+          LIMIT 1
+        `
+        contactPreference = rows[0]?.contactPreference ?? null
+      } catch (error: any) {
+        const errorMessage = error?.message || ''
+        const errorCode = error?.code || error?.meta?.code
+        const isMissingColumn =
+          errorCode === 'P2022' ||
+          errorMessage.includes('column') ||
+          errorMessage.includes('does not exist')
+        if (!isMissingColumn) {
+          throw error
+        }
+      }
+    }
+
     const post = await prisma.blogPost.create({
       data: {
         title,
@@ -67,9 +101,10 @@ export async function POST(request: NextRequest) {
         excerpt: excerpt || null,
         content,
         featuredImage: featuredImage || null,
-        author: author || null,
-        published: published || false,
-        publishedAt: published ? new Date() : null,
+        author: author || (session.role === 'blogger' ? session.username : null),
+        published: shouldPublish,
+        publishedAt: shouldPublish ? new Date() : null,
+        contactPreference,
       },
     })
 

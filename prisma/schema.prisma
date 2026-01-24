@@ -121,6 +121,8 @@ model Admin {
   id           Int      @id @default(autoincrement())
   username     String   @unique
   passwordHash String
+  role         String   @default("admin") // admin, blogger
+  contactPreference String? // Preferred contact details for bloggers
   createdAt    DateTime @default(now())
 }
 
@@ -185,6 +187,8 @@ model BlogPost {
   published   Boolean  @default(false)
   publishedAt DateTime?
   views       Int      @default(0)
+  clapCount   Int      @default(0)
+  contactPreference String? // Contact details submitted by the author
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -193,6 +197,8 @@ model BlogPost {
   @@index([publishedAt])
   @@index([category])
 }
+
+
 
 model Waitlist {
   id          Int      @id @default(autoincrement())

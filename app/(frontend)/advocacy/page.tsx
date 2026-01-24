@@ -29,6 +29,7 @@ export default function AdvocacyPage() {
     name: '',
     email: '',
     phone: '',
+    profilePicture: '',
     availability: '',
     activityType: '',
     areasOfInterest: [] as string[],
@@ -70,6 +71,7 @@ export default function AdvocacyPage() {
         name: '',
         email: '',
         phone: '',
+        profilePicture: '',
         availability: '',
         activityType: '',
         areasOfInterest: [],
@@ -93,6 +95,23 @@ export default function AdvocacyPage() {
       ...formData,
       [name]: value,
     })
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) {
+      setFormData({ ...formData, profilePicture: '' })
+      return
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Please upload an image smaller than 2MB.')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      setFormData({ ...formData, profilePicture: reader.result as string })
+    }
+    reader.readAsDataURL(file)
   }
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -209,39 +228,6 @@ export default function AdvocacyPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary-50 overflow-hidden">
-        <div className="container-custom relative z-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-4">
-              Get Involved
-            </h1>
-          <p className="text-xl text-gray-600 text-center max-w-2xl mx-auto">
-              Join our community of advocates, volunteers, and supporters
-              working to transform mental health awareness
-            </p>
-        </div>
-      </section>
-
-      {/* Why Get Involved Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
-        {/* Flowing divider */}
-        <div className="absolute top-0 left-0 right-0 h-24 overflow-hidden">
-          <svg 
-            className="absolute top-0 left-0 w-full h-full" 
-            viewBox="0 0 1200 100" 
-            preserveAspectRatio="none"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M0,60 Q150,10 300,50 Q450,80 600,30 Q750,5 900,55 Q1050,85 1200,40 L1200,0 L0,0 Z"
-              fill="#f0f5d0"
-            />
-          </svg>
-        </div>
-        
-      </section>
-
       {/* Volunteer Application Form */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white overflow-hidden">
         <div className="container-custom relative z-10">
@@ -327,6 +313,29 @@ export default function AdvocacyPage() {
 
                 <div className="mb-6">
                   <label
+                    htmlFor="profilePicture"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Upload a Picture (Optional)
+                  </label>
+                  <input
+                    type="file"
+                    id="profilePicture"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+                  />
+                  {formData.profilePicture && (
+                    <img
+                      src={formData.profilePicture}
+                      alt="Preview"
+                      className="mt-4 h-32 w-32 rounded-lg object-cover border border-gray-200"
+                    />
+                  )}
+                </div>
+
+                <div className="mb-6">
+                  <label
                     htmlFor="availability"
                     className="block text-sm font-semibold text-gray-700 mb-2"
                   >
@@ -385,6 +394,7 @@ export default function AdvocacyPage() {
                       'Graphic Design',
                       'Photography',
                       'Content Development',
+                      'Blogger',
                     ].map((area) => (
                       <label
                         key={area}
@@ -488,6 +498,7 @@ export default function AdvocacyPage() {
                 { name: 'Graphic Design', icon: Palette },
                 { name: 'Photography', icon: Camera },
                 { name: 'Content Development', icon: FileText },
+                { name: 'Blogger', icon: FileText },
               ].map((area, index) => {
                 const rotations = ['rotate-1', '-rotate-1', 'rotate-0.5', '-rotate-0.5', 'rotate-1', '-rotate-1']
                 const IconComponent = area.icon

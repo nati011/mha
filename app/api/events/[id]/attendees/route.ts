@@ -47,9 +47,9 @@ export async function POST(
       howHeardAbout,
     } = body
 
-    if (!name || !email || !phone) {
+    if (!name || !phone) {
       return NextResponse.json(
-        { error: 'Name, email, and phone number are required' },
+        { error: 'Name and phone number are required' },
         { status: 400 }
       )
     }
@@ -81,22 +81,24 @@ export async function POST(
     }
 
     // Normalize email and phone for comparison
-    const normalizedEmail = email.toLowerCase().trim()
+    const normalizedEmail = email ? email.toLowerCase().trim() : ''
     const normalizedPhone = phone.trim()
 
     // Check if email already registered for this event
-    const existingAttendeeByEmail = await prisma.attendee.findFirst({
-      where: {
-        eventId: Number.parseInt(params.id),
-        email: normalizedEmail,
-      },
-    })
+    if (normalizedEmail) {
+      const existingAttendeeByEmail = await prisma.attendee.findFirst({
+        where: {
+          eventId: Number.parseInt(params.id),
+          email: normalizedEmail,
+        },
+      })
 
-    if (existingAttendeeByEmail) {
-      return NextResponse.json(
-        { error: 'This email is already registered for this event' },
-        { status: 400 }
-      )
+      if (existingAttendeeByEmail) {
+        return NextResponse.json(
+          { error: 'This email is already registered for this event' },
+          { status: 400 }
+        )
+      }
     }
 
     // Check if phone number already registered for this event

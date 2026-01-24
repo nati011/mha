@@ -11,7 +11,9 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   return bcrypt.compare(password, hash)
 }
 
-export async function getSession(request: NextRequest): Promise<{ isAuthenticated: boolean; username?: string }> {
+export async function getSession(
+  request: NextRequest
+): Promise<{ isAuthenticated: boolean; username?: string; role?: string }> {
   // Skip database calls during build time or if DATABASE_URL is not set
   const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build' || 
                       process.env.NEXT_PHASE === 'phase-development-build' ||
@@ -52,7 +54,31 @@ export async function getSession(request: NextRequest): Promise<{ isAuthenticate
       return { isAuthenticated: false }
     }
 
-    return { isAuthenticated: true, username: session.username }
+    let role = 'admin'
+    try {
+      const rows = await prisma.$queryRaw<{ role: string | null }[]>`
+        SELECT "role"
+        FROM "Admin"
+        WHERE "username" = ${session.username}
+        LIMIT 1
+      `
+      if (!rows || rows.length === 0) {
+        return { isAuthenticated: false }
+      }
+      role = rows[0]?.role || 'admin'
+    } catch (error: any) {
+      const errorMessage = error?.message || ''
+      const errorCode = error?.code || error?.meta?.code
+      const isMissingRoleColumn =
+        errorCode === 'P2022' ||
+        errorMessage.includes('column') ||
+        errorMessage.includes('does not exist')
+      if (!isMissingRoleColumn) {
+        throw error
+      }
+    }
+
+    return { isAuthenticated: true, username: session.username, role }
   } catch (error) {
     // Handle PrismaClient initialization errors gracefully
     if (error instanceof Error && error.message.includes('DATABASE_URL is not set')) {
@@ -104,13 +130,24 @@ export async function deleteSession(sessionId: string): Promise<void> {
   }
 }
 
-export async function requireAuth(request: NextRequest): Promise<{ isAuthenticated: boolean; username?: string } | null> {
+export async function requireAuth(
+  request: NextRequest
+): Promise<{ isAuthenticated: boolean; username?: string; role?: string } | null> {
   const session = await getSession(request)
   
   if (!session.isAuthenticated) {
     return null
   }
-  
+
+  if (session.role === 'blogger') {
+    const pathname = request.nextUrl.pathname
+    const allowedPrefixes = ['/api/blog', '/api/admin/blog']
+    const isAllowed = allowedPrefixes.some((prefix) => pathname.startsWith(prefix))
+    if (!isAllowed) {
+      return null
+    }
+  }
+
   return session
 }
 
