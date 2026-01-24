@@ -12,7 +12,9 @@ import {
   Clock,
   Download,
   CheckCircle2,
-  XCircle
+  XCircle,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 
 interface Attendee {
@@ -42,14 +44,27 @@ export default function AllAttendeesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showUnique, setShowUnique] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
   const [stats, setStats] = useState({
     total: 0,
     unique: 0,
   })
+  const pageSize = 25
+  const totalPages = Math.max(1, Math.ceil(attendees.length / pageSize))
+  const pageStart = (currentPage - 1) * pageSize
+  const pageEnd = Math.min(pageStart + pageSize, attendees.length)
+  const visibleAttendees = attendees.slice(pageStart, pageEnd)
 
   useEffect(() => {
+    setCurrentPage(1)
     fetchData()
   }, [showUnique])
+  
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages)
+    }
+  }, [currentPage, totalPages])
 
   const fetchData = async () => {
     try {
@@ -249,7 +264,7 @@ export default function AllAttendeesPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {attendees.map((attendee) => (
+                  {visibleAttendees.map((attendee) => (
                     <tr key={attendee.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{attendee.name}</div>
@@ -338,6 +353,34 @@ export default function AllAttendeesPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50">
+              <div className="text-sm text-gray-600">
+                Showing {pageStart + 1}-{pageEnd} of {attendees.length}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Prev
+                </button>
+                <span className="text-sm text-gray-700">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}
