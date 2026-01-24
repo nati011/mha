@@ -1,10 +1,28 @@
 import Link from 'next/link'
 import { ArrowLeft, Calendar, User } from 'lucide-react'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
+
+function getBaseUrl() {
+  const envBaseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  if (envBaseUrl) {
+    return envBaseUrl.replace(/\/$/, '')
+  }
+
+  const headerList = headers()
+  const host = headerList.get('x-forwarded-host') ?? headerList.get('host')
+  const protocol = headerList.get('x-forwarded-proto') ?? 'http'
+
+  if (host) {
+    return `${protocol}://${host}`
+  }
+
+  return 'http://localhost:3000'
+}
 
 async function getBlogPost(slug: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    const baseUrl = getBaseUrl()
     const response = await fetch(`${baseUrl}/api/blog/${slug}`, {
       cache: 'no-store',
       headers: {
