@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Clock, MapPin, ArrowRight, Users } from 'lucide-react'
+import { Calendar, Clock, MapPin, ArrowRight, Users } from 'lucide-react'
 import { isUrl } from '@/lib/utils'
 
 interface Panelist {
@@ -49,6 +49,14 @@ export default function EventCard({ event, index = 0 }: Readonly<EventCardProps>
   }
 
   const dateInfo = formatDate(event.date)
+  const dateValue = new Date(event.date)
+  const formattedDate = isNaN(dateValue.getTime())
+    ? event.date
+    : dateValue.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
   const dateBoxRotationClasses = [
     'transform -rotate-1 hover:rotate-0',
     'transform rotate-1 hover:rotate-0',
@@ -100,6 +108,10 @@ export default function EventCard({ event, index = 0 }: Readonly<EventCardProps>
             <p className="text-sm text-gray-600 mb-3 line-clamp-2">{event.description}</p>
             
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+              <div className="flex items-center gap-1">
+                <Calendar className="w-4 h-4 text-primary-500" />
+                <span className="font-medium">{formattedDate}</span>
+              </div>
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4 text-primary-500" />
                 <span className="font-medium">

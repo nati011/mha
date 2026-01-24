@@ -123,11 +123,20 @@ export default function EventsPageClient({ events: initialEvents }: { events: Ev
               <p className="text-gray-500 mt-2">Check back soon for new events!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              className={`grid gap-6 ${
+                filteredEvents.length === 1
+                  ? 'grid-cols-1 place-items-center'
+                  : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              }`}
+            >
               {filteredEvents.map((event: any, index: number) => {
                 const rotations = ['rotate-1', '-rotate-1', 'rotate-0.5', '-rotate-0.5', 'rotate-1', '-rotate-1']
                 return (
-                  <div key={event.id} className={`transform ${rotations[index % rotations.length]} hover:rotate-0 transition-transform duration-300`}>
+                  <div
+                    key={event.id}
+                    className={`w-full ${filteredEvents.length === 1 ? 'max-w-xl' : ''} transform ${rotations[index % rotations.length]} hover:rotate-0 transition-transform duration-300`}
+                  >
                     <div className="border-2 border-gray-200 rounded-lg hover:border-primary-300 hover:shadow-md transition-all duration-200 bg-gradient-to-r from-white to-primary-50/30">
                       <EventCard event={event} index={index} />
                     </div>
