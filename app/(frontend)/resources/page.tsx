@@ -159,11 +159,6 @@ export default function ResourcesPage() {
                         {post.title}
                       </h3>
                       <p className="text-gray-600 mb-4 line-clamp-3">{post.slug}</p>
-                      {post.clapCount && post.clapCount > 0 && (
-                        <div className="text-sm text-gray-500 mb-4">
-                          👏 {post.clapCount}
-                        </div>
-                      )}
                       <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
                         <div className="flex items-center gap-4">
                           {post.author && (
