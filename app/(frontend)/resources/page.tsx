@@ -198,7 +198,7 @@ export default function ResourcesPage() {
           )}
           <div className="mt-10 flex flex-col items-center gap-3">
             <p className="text-sm text-gray-600">
-              Want to share your story? Register to create a blog post.
+              Want to share your story?
             </p>
             <Link
               href="/resources/new"
