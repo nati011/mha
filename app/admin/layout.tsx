@@ -136,8 +136,7 @@ export default function AdminLayout({
     { href: '/admin/announcements', label: 'Announcements', icon: Bell },
     { href: '/admin/blog', label: 'Blog', icon: FileText },
     { href: '/admin/resources', label: 'Resources', icon: BookOpen },
-    { href: '/admin/volunteers', label: 'Volunteers', icon: Users },
-    { href: '/admin/members', label: 'Members', icon: UserCheck },
+    { href: '/admin/members', label: 'Volunteers', icon: UserCheck },
     { href: '/admin/attendees', label: 'Attendees', icon: Users },
     { href: '/admin/users', label: 'Users', icon: UserCog },
   ]
