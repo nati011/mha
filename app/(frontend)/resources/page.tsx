@@ -158,9 +158,7 @@ export default function ResourcesPage() {
                       <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2">
                         {post.title}
                       </h3>
-                      {post.excerpt && (
-                        <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt}</p>
-                      )}
+                      <p className="text-gray-600 mb-4 line-clamp-3">{post.slug}</p>
                       {post.clapCount && post.clapCount > 0 && (
                         <div className="text-sm text-gray-500 mb-4">
                           👏 {post.clapCount}

@@ -708,3 +708,10 @@
 {"location":"layout.tsx:9","message":"FrontendLayout rendering","data":{"hasChildren":true,"nodeEnv":"development"},"timestamp":1769260112367,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
 {"location":"page.tsx:201","message":"Home component rendering start","data":{"timestamp":"2026-01-24T13:08:32.963Z"},"timestamp":1769260112964,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
 {"location":"page.tsx:204","message":"Home component data fetched","data":{"upcomingEventsCount":1,"stats":{"totalMembers":0,"totalEvents":1}},"timestamp":1769260112997,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"layout.tsx:9","message":"FrontendLayout rendering","data":{"hasChildren":true,"nodeEnv":"development"},"timestamp":1769260395449,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"layout.tsx:9","message":"FrontendLayout rendering","data":{"hasChildren":true,"nodeEnv":"development"},"timestamp":1769260441988,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"layout.tsx:9","message":"FrontendLayout rendering","data":{"hasChildren":true,"nodeEnv":"development"},"timestamp":1769260509090,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"layout.tsx:9","message":"FrontendLayout rendering","data":{"hasChildren":true,"nodeEnv":"development"},"timestamp":1769260605230,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"layout.tsx:9","message":"FrontendLayout rendering","data":{"hasChildren":true,"nodeEnv":"development"},"timestamp":1769260605233,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"layout.tsx:9","message":"FrontendLayout rendering","data":{"hasChildren":true,"nodeEnv":"development"},"timestamp":1769260610834,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
+{"location":"layout.tsx:9","message":"FrontendLayout rendering","data":{"hasChildren":true,"nodeEnv":"development"},"timestamp":1769260610840,"sessionId":"debug-session","runId":"run1","hypothesisId":"C"}
