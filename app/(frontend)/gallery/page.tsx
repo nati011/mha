@@ -31,7 +31,7 @@ export default function GalleryPage() {
       </section>
 
       {/* Gallery Section */}
-      <section className="section-padding">
+      <section className="pt-8 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="container-custom">
           {/* Category Filter */}
           {categories.length > 1 && (
