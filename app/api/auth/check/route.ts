@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       authenticated: true,
       username: session.username,
+      role: session.role || 'admin',
     })
   } catch (error) {
     console.error('Auth check error:', error)

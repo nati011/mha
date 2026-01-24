@@ -19,7 +19,7 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-primary-50 overflow-hidden">
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Flowing divider - Bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-24 overflow-hidden">
           <svg 

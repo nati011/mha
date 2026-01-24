@@ -32,9 +32,9 @@ export async function PATCH(
     }
 
     // Otherwise, update attendee details
-    if (!name || !email || !phone) {
+    if (!name || !phone) {
       return NextResponse.json(
-        { error: 'Name, email, and phone number are required' },
+        { error: 'Name and phone number are required' },
         { status: 400 }
       )
     }
@@ -43,7 +43,7 @@ export async function PATCH(
       where: { id: attendeeId },
       data: {
         name,
-        email,
+        email: email?.trim() || '',
         phone,
         emergencyContact: emergencyContact || null,
         ageRange: ageRange || null,

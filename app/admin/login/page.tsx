@@ -38,9 +38,17 @@ export default function AdminLoginPage() {
       const data = await response.json()
       
       if (data.success) {
-        // Wait a moment for the cookie to be set
         await new Promise(resolve => setTimeout(resolve, 100))
-        router.push('/admin')
+        const authCheck = await fetch('/api/auth/check', {
+          credentials: 'include',
+        })
+        if (authCheck.ok) {
+          const authData = await authCheck.json()
+          const nextPath = authData.role === 'blogger' ? '/admin/blog' : '/admin'
+          router.push(nextPath)
+        } else {
+          router.push('/admin')
+        }
         router.refresh()
       } else {
         setError(data.error || 'Login failed')
@@ -112,7 +120,13 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center space-y-2">
+          <p className="text-sm text-gray-600">
+            Need a blog account?{' '}
+            <Link href="/resources/new" className="text-primary-600 hover:text-primary-700">
+              Register to post
+            </Link>
+          </p>
           <Link href="/" className="text-sm text-primary-600 hover:text-primary-700">
             ← Back to website
           </Link>

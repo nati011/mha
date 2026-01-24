@@ -32,14 +32,17 @@ export default function AdminLayout({
   const pathname = usePathname()
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const [username, setUsername] = useState<string>('')
+  const [role, setRole] = useState<'admin' | 'blogger'>('admin')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const checkingAuthRef = useRef(false)
 
   useEffect(() => {
     let isMounted = true
     
-    // Skip auth check if already on login page
-    if (pathname === '/admin/login') {
+    const isAuthPage = pathname === '/admin/login' || pathname === '/admin/register'
+
+    // Skip auth check if already on login/register page
+    if (isAuthPage) {
       setIsAuthenticated(false)
       checkingAuthRef.current = false
       return () => {
@@ -67,7 +70,7 @@ export default function AdminLayout({
         if (!response.ok) {
           setIsAuthenticated(false)
           checkingAuthRef.current = false
-          if (pathname !== '/admin/login') {
+          if (!isAuthPage) {
             router.push('/admin/login')
           }
           return null
@@ -79,9 +82,14 @@ export default function AdminLayout({
         if (data?.authenticated) {
           setIsAuthenticated(true)
           setUsername(data.username || 'Admin')
+          const nextRole = data.role === 'blogger' ? 'blogger' : 'admin'
+          setRole(nextRole)
+          if (nextRole === 'blogger' && !pathname.startsWith('/admin/blog')) {
+            router.push('/admin/blog')
+          }
         } else {
           setIsAuthenticated(false)
-          if (pathname !== '/admin/login') {
+          if (!isAuthPage) {
             router.push('/admin/login')
           }
         }
@@ -93,7 +101,7 @@ export default function AdminLayout({
         setIsAuthenticated(false)
         checkingAuthRef.current = false
         // Don't redirect if we're already on login page
-        if (pathname !== '/admin/login') {
+        if (!isAuthPage) {
           router.push('/admin/login')
         }
       })
@@ -134,8 +142,12 @@ export default function AdminLayout({
     { href: '/admin/users', label: 'Users', icon: UserCog },
   ]
 
-  // Don't show layout on login page - always show login page if pathname matches
-  if (pathname === '/admin/login') {
+  const visibleNavItems = role === 'blogger'
+    ? [{ href: '/admin/blog', label: 'Blog', icon: FileText }]
+    : navItems
+
+  // Don't show layout on login/register page
+  if (pathname === '/admin/login' || pathname === '/admin/register') {
     return (
       <div className="min-h-screen bg-gray-50">
         {children}
@@ -158,6 +170,14 @@ export default function AdminLayout({
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-600">Redirecting to login...</div>
+      </div>
+    )
+  }
+
+  if (role === 'blogger' && !pathname.startsWith('/admin/blog')) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Redirecting to blog...</div>
       </div>
     )
   }
@@ -199,7 +219,7 @@ export default function AdminLayout({
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-            {navItems.map((item) => {
+            {visibleNavItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href || 
                 (item.href !== '/admin' && pathname.startsWith(item.href))
@@ -261,7 +281,9 @@ export default function AdminLayout({
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-gray-900">{username}</p>
-                  <p className="text-xs text-gray-500">Administrator</p>
+                  <p className="text-xs text-gray-500">
+                    {role === 'blogger' ? 'Blog Contributor' : 'Administrator'}
+                  </p>
                 </div>
               </div>
               {/* Logout Button */}
