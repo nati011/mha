@@ -131,14 +131,20 @@ export default function ResourcesPage() {
               <p className="text-gray-500 mt-2">Check back soon for new articles!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              className={`grid gap-6 ${
+                filteredPosts.length === 1
+                  ? 'grid-cols-1 place-items-center'
+                  : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              }`}
+            >
               {filteredPosts.map((post: BlogPost, index: number) => {
                 const rotations = ['rotate-1', '-rotate-1', 'rotate-0.5', '-rotate-0.5', 'rotate-1', '-rotate-1']
                 return (
                   <Link
                     key={post.id}
                     href={`/resources/${post.slug}`}
-                    className={`bg-white rounded-xl shadow-sm border-2 border-gray-100 hover:shadow-lg hover:border-primary-200 transition-all duration-300 overflow-hidden group transform ${rotations[index % rotations.length]} hover:rotate-0`}
+                    className={`w-full ${filteredPosts.length === 1 ? 'max-w-md' : ''} bg-white rounded-xl shadow-sm border-2 border-gray-100 hover:shadow-lg hover:border-primary-200 transition-all duration-300 overflow-hidden group transform ${rotations[index % rotations.length]} hover:rotate-0`}
                   >
                     {post.featuredImage && (
                       <div className="aspect-video overflow-hidden bg-gray-100">
