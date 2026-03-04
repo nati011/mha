@@ -19,5 +19,10 @@ export const partners: Partner[] = [
     logo: '/partners/water_aid_logo.png',
     url: 'https://www.wateraid.org/et/'
   },
+  {
+    name: 'Gebre Kirstos Desta center',
+    logo: '/partners/GKDC_logo.png',
+    url: ''
+  },
 ]
 
